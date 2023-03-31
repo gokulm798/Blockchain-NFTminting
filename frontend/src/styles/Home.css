@@ -1,0 +1,57 @@
+.welcomeWrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100vh;
+  /* background: #061611; */
+  overflow: hidden;
+}
+
+.bgPattern {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.card,
+.cardis-flipped {
+  position: relative;
+  width: 420px;
+  height: 600px;
+  /* max-height: 550px; */
+  padding: 0px;
+  transform-style: preserve-3d;
+  transition: transform 0.8s;
+}
+.card-front,
+.card-back {
+  position: absolute;
+  /* width: 100%;*/
+  height: 100%;
+  backface-visibility: hidden;
+}
+.card-front {
+  z-index: 2;
+  /* backface-visibility: hidden; */
+  /* background-color: blueviolet; */
+}
+.card-back {
+  transform: rotateY(180deg);
+  /* backface-visibility: hidden; */
+}
+
+.cardis-flipped {
+  transform: rotateY(180deg);
+}
+/* .cardis-flipped .card-front {
+  z-index: 1;
+  backface-visibility: hidden;
+} */
+/* .cardis-flipped .card-back {
+  z-index: 2;
+  transform: rotateY(180deg);
+} */

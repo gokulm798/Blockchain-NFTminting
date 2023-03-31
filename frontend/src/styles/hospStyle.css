@@ -1,0 +1,79 @@
+.hosp {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.hospForm {
+  padding: 40px;
+  margin: 20px auto;
+  width: 400px;
+  background: rgba(3, 23, 16, 0.93);
+  border-radius: 10px;
+}
+.hospForm input {
+  width: 100%;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 30px;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  background: transparent;
+}
+.container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-gap: 10px;
+}
+.mintContainer {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 10px;
+}
+.mintForm {
+  padding-block: 40px;
+  margin: 20px auto;
+  width: 350px;
+  height: 330px;
+  background: rgba(3, 23, 16, 0.93);
+  box-sizing: border-box;
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+}
+.mintForm input {
+  width: 100%;
+  /* padding: 10px 0; */
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 30px;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  background: transparent;
+}
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  color: white;
+  margin-inline: 20px;
+  padding: 10px 5px;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+#mNft {
+  width: 90%;
+  margin-top: 15px;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
