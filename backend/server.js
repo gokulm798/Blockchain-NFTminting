@@ -13,6 +13,7 @@ const connectDB = require("./config/db");
 const userRoutes =require('./routes/userRoutes');
 const ipfsRoutes =require('./routes/ipfsRoutes');
 const reqRoutes =require('./routes/reqRoutes');
+const feedRoutes =require('./routes/feedRoutes');
 var request = require('request-promise');
 const {notFound,errorHandler}  = require('./middleware/errorMiddleware')
 
@@ -39,6 +40,8 @@ app.use("/api/user",userRoutes);
 app.use("/api/upload",ipfsRoutes);
 
 app.use("/api/request",reqRoutes);
+
+app.use("/api/feed",feedRoutes);
 
 
 
