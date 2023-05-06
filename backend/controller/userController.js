@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 
 const generateToken = require("../config/generateToken");
 const User = require("../models/user");
+const data = require("../models/ipfs");
 
 //@description     Get or Search all users
 //@route           GET /api/user/search
@@ -78,5 +79,21 @@ const authUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid Email or Password");
   }
 });
+//@description     Get Patient's History
+//@route           GET /api/user/history
+//@access          Public
+const history = asyncHandler(async (req, res) => {
+ 
+   
+  //console.log(req.user)
+  const historyData = await data.find(
+    { patient_username :req.user.username }
+)
+res.send(historyData)
 
-module.exports = { registerUser, authUser ,allUsers};
+
+ 
+});
+
+
+module.exports = { registerUser, authUser ,allUsers, history};
