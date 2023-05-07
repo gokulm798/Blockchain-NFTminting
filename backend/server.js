@@ -37,7 +37,7 @@ app.use(cors());
 
 app.use("/api/user",userRoutes);
 
-app.use("/api/upload",ipfsRoutes);
+app.use("/api/nft",ipfsRoutes);
 
 app.use("/api/request",reqRoutes);
 

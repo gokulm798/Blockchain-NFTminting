@@ -48,25 +48,24 @@ const upload = asyncHandler(async (req, res) => {
   }
 });
 
-//@description     Auth the user
-//@route           POST /api/users/login
+//@description     Download ipfs content
+//@route           GET /api/nft/download
 //@access          Public
-/*const authUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+const download = asyncHandler(async (req, res) => {
+  //const { cid } = req.body;
 
-  const user = await User.findOne({ email });
+  const cidExists = await data.findOne({ cid:req.body.cid });
 
-  if (user && (await user.matchPassword(password))) {
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      token: generateToken(user._id),
-    });
-  } else {
-    res.status(401);
-    throw new Error("Invalid Email or Password");
-  }
-});*/
+  if (cidExists==null) {
+    res.status(400);
+    throw new Error("CID  match not found");
+  }   
+   res.json({
+    download:true,
+    content:req.result
 
-module.exports = { upload };
+   })
+  
+});
+
+module.exports = { upload ,download};
