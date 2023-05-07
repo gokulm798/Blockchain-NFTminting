@@ -12,12 +12,13 @@ const allUsers = asyncHandler(async (req, res) => {
    //console.log(keyword)
     
    // console.log(req.user)
-
-  const users = await User.find({ $or: [ 
+   const users = await User.find({ $or: [ 
     { name: { $regex: keyword, $options: "i" } },
-    { username: { $regex: keyword, $options: "i" } },]})
+    { username: { $regex: keyword, $options: "i" } },]},{password:0})
     .find({ _id: { $ne: req.user._id } });
   res.send(users);
+
+
 });
 
 //@description     Register new user
@@ -86,9 +87,7 @@ const history = asyncHandler(async (req, res) => {
  
    
   //console.log(req.user)
-  const historyData = await data.find(
-    { patient_username :req.user.username }
-)
+  const historyData = await data.find({ patient_username :req.user.username })
 res.send(historyData)
 
 

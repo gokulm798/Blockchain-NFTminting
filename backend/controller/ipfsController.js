@@ -11,7 +11,7 @@ const User = require("../models/user");
 const upload = asyncHandler(async (req, res) => {
   const {patient_username,owner,meta } = req.body;
   const hospital_username=req.user.username
-  const cid = req.result.cid
+  const cid = req.result
   //console.log(cid)
   //console.log(hospital_username)
 
@@ -69,4 +69,4 @@ const upload = asyncHandler(async (req, res) => {
   }
 });*/
 
-module.exports = { upload};
+module.exports = { upload };

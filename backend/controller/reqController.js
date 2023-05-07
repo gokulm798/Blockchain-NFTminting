@@ -5,7 +5,7 @@ const nftRequest = require("../models/userRequest");
 const User = require("../models/user");
 
 
-//@description     Request the patient to mint
+//@description     Request the patient to mint or to License
 //@route           POST /api/request/
 //@access          Public
 const userRequest = asyncHandler(async (req, res) => {
