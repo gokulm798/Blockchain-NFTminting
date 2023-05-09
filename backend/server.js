@@ -11,6 +11,7 @@ var cors=require('cors');
 //const {createIPFSNode}= require("./config/ipfsConnect.cjs")
 const connectDB = require("./config/db");
 const userRoutes =require('./routes/userRoutes');
+const accountRoutes =require('./routes/accountRoutes');
 const ipfsRoutes =require('./routes/ipfsRoutes');
 const reqRoutes =require('./routes/reqRoutes');
 const feedRoutes =require('./routes/feedRoutes');
@@ -32,8 +33,6 @@ const http = require('http').createServer(app)
 app.use(express.json());
 app.use(cors());
 
-//app.use("/home",protect)
-//app.use("/home/code/",protect)
 
 app.use("/api/user",userRoutes);
 
@@ -42,6 +41,8 @@ app.use("/api/nft",ipfsRoutes);
 app.use("/api/request",reqRoutes);
 
 app.use("/api/feed",feedRoutes);
+
+app.use("/api/accounts",accountRoutes);
 
 
 
