@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 
 
-const User = require("../models/user");
+const {User} = require("../models/user");
 const account = require("../models/account");
 
 //@description     To add Metamask accounts to users

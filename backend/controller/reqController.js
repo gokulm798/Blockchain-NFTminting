@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 
 
 const {nftRequest,licenseRequest} = require("../models/userRequest");
-const User = require("../models/user");
+const {User} = require("../models/user");
 
 
 //********************************************************************************************************************************************** */

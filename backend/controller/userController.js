@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 
 const generateToken = require("../config/generateToken");
-const User = require("../models/user");
+const {User,detail} = require("../models/user");
 const data = require("../models/ipfs");
 
 //@description     Get or Search all users
@@ -31,6 +31,7 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Please Enter all the Feilds");
   }
+   
 
   const userExists = await User.findOne({ username });
 
@@ -51,7 +52,6 @@ const registerUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       username: user.username,
-      
       token: generateToken(user._id),
     });
   } else {
@@ -94,5 +94,59 @@ res.send(historyData)
  
 });
 
+//@description     To Enter Patient's Details
+//@route           POST /api/user/details
+//@access          Public
+const patientDetails = asyncHandler(async (req, res) => {
+  const {DateOfBirth,gender,bloodGroup } = req.body;
 
-module.exports = { registerUser, authUser ,allUsers, history};
+  if ( !DateOfBirth || !gender || !bloodGroup) {
+    res.status(400);
+    throw new Error("Please Enter all the Feilds");
+  }
+   const dateOfBirth=new Date(DateOfBirth)
+   const username=req.user.username
+
+  
+
+  const userExists = await User.findOne({ username });
+
+  if (userExists==null) {
+    res.status(400);
+    throw new Error("User Not Found");
+  }
+
+  const patientDetailExists = await detail.findOne({ username :username});
+
+  if (patientDetailExists) {
+    res.status(400);
+    throw new Error("Details already Entered ");
+  }
+
+  const patDetails = await detail.create({
+    username,
+    dateOfBirth,
+    gender,
+    bloodGroup, 
+  });
+
+  if (patDetails) {
+    res.status(201).json({
+    
+      username: username,
+      dateOfBirth:dateOfBirth,
+      gender:gender,
+      bloodGroup:bloodGroup,
+      
+    });
+  } else {
+    res.status(400);
+    throw new Error("Details Not Uploaded");
+  }
+});
+
+
+
+
+
+module.exports = { registerUser, authUser ,allUsers, history, patientDetails };
