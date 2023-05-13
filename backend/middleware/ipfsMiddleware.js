@@ -32,13 +32,19 @@ const nftUpload = asyncHandler(async (req, res, next) => {
 
     const node=await createIPFSNode();
     
-    const str= await node.cat(req.body.cid)
+    const str= await node.cat(req.body.cid,{ maxBuffer: 10 * 1024 * 1024 })
     //console.log(str)
+    let result=''
 
     for await (const itr of str) {
-        req.result = Buffer.from(itr).toString()
-        console.log(req.result)
+        const buffer = Buffer.from(itr).toString()
+        result+=buffer
+        
+        
      }
+     req.result=result
+     console.log(result)
+     
 
 
 

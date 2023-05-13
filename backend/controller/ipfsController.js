@@ -82,16 +82,20 @@ const download = asyncHandler(async (req, res) => {
   //const { cid } = req.body;
 
   const cidExists = await data.findOne({ cid:req.body.cid });
-
+   
   if (cidExists==null) {
     res.status(400);
     throw new Error("CID  match not found");
-  }   
+  }  
+  //console.log(req.result) 
    res.json({
     download:true,
     content:req.result
+  })
 
-   })
+  // res.setHeader('Content-Type', 'text/plain');
+  // res.setHeader('Content-Length', Buffer.byteLength(req.result, 'utf-8'));
+  // res.send(req.result);
   
 });
 
