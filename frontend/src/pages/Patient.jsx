@@ -1,117 +1,127 @@
-import React, { useState } from "react";
-import "../styles/patStyle.css";
-import { provider, signer, contract } from "../ConnWallet";
-import Modal from "react-modal";
-import { Link } from "react-router-dom";
-// const { ethers } = require("ethers");
-Modal.setAppElement("body");
+import React, { useEffect, useState } from "react";
+import { Navbar } from "../components/Navbar";
+import RecordContainer from "../components/RecordContainer";
+import RequestContainer from "../components/RequestContainer";
+import SearchBar from "../components/SearchBar";
 
-const Patient = () => {
-  // console.log(ethers.version)
-  const [Acc, setAcc] = useState(null);
-  const [Token, setToken] = useState(null);
-  const [btnText, setBtnText] = useState("Connect Wallet");
+import RecordViewer from "../components/RecordViewer";
+import { useLocation } from "react-router-dom";
+import PopUp from "../components/PopUp";
 
-  const [modalContent, setmodalContent] = useState(null);
-  const [dispModal, setdispModal] = useState(false);
-  const [SelectedAccount, setSelectedAccount] = useState(null);
+const Patient = (props) => {
+  const [currentTab, setCurrentTab] = useState("history");
+  const [Veiw, setVeiw] = useState(false);
+  const [Request, setRequest] = useState([]);
+  const [Record, setRecord] = useState([]);
+  const [Pop, setPop] = useState(true);
+  // const location = useLocation();
+  const tk = sessionStorage.getItem("tk");
+  const [cnt, setCnt] = useState(0);
 
-  const connWallet = async () => {
-    console.log("hi");
-    if (window.ethereum) {
-      console.log("Metamask detected");
-      const accounts = await window.ethereum.request({
-        method: "eth_accounts",
-      });
-      // // debugger;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8000/api/request/mint/check",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tk}`,
+            },
+          }
+        );
 
-      // window.ethereum.on("accountsChanged", connWallet);
-      // let accounts= await provider.listAccounts();
-      console.log(accounts.length);
-      if (accounts.length === 1) {
-        setSelectedAccount(accounts[0]);
-        return;
-      } else {
-        const accList = accounts.map((account) => (
-          <li
-            key={account}
-            style={{ color: "#000" }}
-            onClick={() => handleAccountSelect(account)}
-          >
-            <Link>{account}</Link>
-          </li>
-        ));
-
-        const handleAccountSelect = (account) => {
-          setSelectedAccount(account);
-          setBtnText("Connected");
-          closeModal();
-        };
-        <ul>{accList}</ul>;
-        openModal();
-        setmodalContent;
-        // }
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          console.log(data._id);
+          setRequest(data);
+        } else {
+          throw new Error("Request failed with status: " + response.status);
+        }
+      } catch (error) {
+        console.log("Error: " + error.message);
       }
-    } else console.log("No metamask");
-  };
+    };
+    fetchData();
+    console.log(cnt);
+  }, [cnt]);
 
-  const openModal = () => {
-    setdispModal(true);
-  };
-  const closeModal = () => {
-    setdispModal(false);
-  };
-  const approveNft = (e) => {
-    e.preventDefault();
-    contract.respondToNFTApproval(true);
-  };
-  const declineNft = () => {
-    contract.respondToNFTApproval(false);
-  };
-  const approveAccess = () => {
-    contract.respondToNFTApproval(true);
-  };
-  const declineAccess = () => {
-    contract.respondToNFTApproval(true);
-  };
-  const getNft = async (e) => {
-    e.preventDefault();
-    const nft = await contract.getNFT(e.target.TokenID.value);
-    console.log(nft);
-  };
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/user/history", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${tk}`,
+          },
+        });
 
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          console.log(data._id);
+          setRecord(data);
+        } else {
+          throw new Error("Request failed with status: " + response.status);
+        }
+      } catch (error) {
+        console.log("Error: " + error.message);
+      }
+    };
+    fetchHistory();
+  }, []);
+
+  // const { fileBase64String } = location.state;
+  // console.log(fileBase64String);
+  const records = ["Demo Post 1", "Demo Post 2", "Demo Post 3", "Demo Post 4"];
+  // const record = [{ hi: "demo" }];
+  // const requests = ["Demo Request 1", "Demo Request 2"];
+  const handleRecordView = () => {
+    setVeiw(true);
+  };
   return (
     <div>
-      <div className="topPanel" style={{ display: "flex", marginLeft: "auto" }}>
-        <div>
-          {" "}
-          <button id="metaConnbtn" onClick={connWallet}>
-            {btnText}
-          </button>
+      <div>
+        <Navbar items={[]} />
+      </div>
+      <div className=" w-screen py-1 bg-white/10 text-white text-sm flex justify-center items-center gap-2 ">
+        <a href="#" onClick={() => setCurrentTab("history")}>
+          History
+        </a>
+        <a href="#" onClick={() => setCurrentTab("requests")}>
+          Requests
+        </a>
+        <div className="relative ml-8 ">
+          <SearchBar />
         </div>
-
-        {/* <div className="panel"></div> */}
-        <Modal isOpen={dispModal} onRequestClose={closeModal}>
-          ariaHideApp={false}
-          {modalContent}
-          <button onClick={closeModal}>Close Modal</button>
-        </Modal>
       </div>
-      <div className="patContainer">
-        <p>Request for minting NFT</p>
-        <button onClick={approveNft}>Approve</button>
-        <button onClick={declineNft}>Reject</button>
+      <div className="flex justify-center items-center w-screen">
+        {currentTab === "history" ? (
+          <RecordContainer records={Record} recordView={handleRecordView} />
+        ) : (
+          <RequestContainer
+            requests={Request}
+            aColour="green-400"
+            rColour="red-500"
+            aBtn="Accept"
+            rBtn="Reject"
+            acptF={acceptReq}
+            rejtF={rejectReq}
+          />
+        )}
       </div>
-      <div className="patContainer">
-        <p>Request for licensing NFT</p>
-        <button onClick={approveAccess}>Approve</button>
-        <button onClick={declineAccess}>Reject</button>
-      </div>
-      <div className="patContainer">
-        <p>Get NFT</p>
-        <input id="TokenID" placeholder="Token ID" type={"text"} />
-        <button onClick={getNft}>Get</button>
-      </div>
+      {Veiw && (
+        <div
+          className="flex justify-center bg-primary/60 fixed top-0 left-0 w-full h-screen z-20 duration-700"
+          onClick={() => setVeiw(false)}
+        >
+          <RecordViewer base64String={fileBase64String} />
+        </div>
+      )}
+      {Pop && <PopUp />}
     </div>
   );
 };
