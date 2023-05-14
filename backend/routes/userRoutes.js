@@ -9,7 +9,7 @@ router.route("/").post(registerUser);
 router.route("/details").post(protect, patientDetails);
 router.route("/details/check").get(protect, patientDetailsCheck);
 router.post("/login",authUser);
-router.route("/search").get(protect, allUsers);
+router.route("/search").post(protect, allUsers);
 router.route("/history").get(protect, history);
 
 

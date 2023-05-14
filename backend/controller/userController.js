@@ -5,7 +5,7 @@ const {User,detail} = require("../models/user");
 const data = require("../models/ipfs");
 
 //@description     Get or Search all users
-//@route           GET /api/user/search
+//@route           POST /api/user/search
 //@access          Public
 const allUsers = asyncHandler(async (req, res) => {
    const keyword=req.body.keyword
