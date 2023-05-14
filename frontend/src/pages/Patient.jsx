@@ -14,6 +14,7 @@ const Patient = (props) => {
   const [Request, setRequest] = useState([]);
   const [Record, setRecord] = useState([]);
   const [Details, setDetails] = useState();
+  const [fileString, setFileString] = useState("");
   const [Pop, setPop] = useState(false);
   // const location = useLocation();
   const tk = sessionStorage.getItem("tk");
@@ -201,8 +202,8 @@ const Patient = (props) => {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
-        console.log(data.Content);
-        // setRequest(data);
+        console.log(data.content);
+        setFileString(data.content);
       } else {
         throw new Error("Request failed with status: " + response.status);
       }
@@ -210,7 +211,7 @@ const Patient = (props) => {
       console.log("Error: " + error.message);
     }
 
-    // setVeiw(true);
+    setVeiw(true);
   };
   return (
     <div>
@@ -248,7 +249,7 @@ const Patient = (props) => {
           className="flex justify-center bg-primary/60 fixed top-0 left-0 w-full h-screen z-20 duration-700"
           onClick={() => setVeiw(false)}
         >
-          <RecordViewer base64String={fileBase64String} />
+          <RecordViewer base64String={fileString} />
         </div>
       )}
       {Pop && <PopUp handleSubmit={detailsSubmit} />}

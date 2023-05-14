@@ -147,10 +147,11 @@ const rejectReq = async (request) => {
           <RecordContainer
             records={Feed}
             licenseNft={handleViewNft}
+            recordView={() => {}}
             expanded={expanded}
           />
         ) : (
-          <RequestContainer requests={requests} />
+          <RequestContainer requests={Request} />
         )}
       </div>
     </div>
