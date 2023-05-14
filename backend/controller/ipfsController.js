@@ -4,15 +4,22 @@ const generateToken = require("../config/generateToken");
 const data = require("../models/ipfs");
 const {User,detail} = require("../models/user");
 const diagnosis = require("../models/diagnosis");
+const account = require("../models/account");
 
 
 //@description     Upload a new NFT
 //@route           POST /api/upload/
 //@access          Public
 const upload = asyncHandler(async (req, res) => {
-  const {patient_username,diagnosis_code,doc_name ,account_address,token_id} = req.body;
+  const {patient_username,diagnosis_code,doc_name , token_id} = req.body;
   const hospital_username=req.user.username
   const cid = req.result
+  const accountExists = await account.findOne({owner_username:patient_username})
+  if(accountExists==null){
+    res.status(400);
+    throw new Error("No valid account for user");
+  }
+  const account_address=accountExists.address
   //console.log(cid)
   //console.log(hospital_username)
 
@@ -24,7 +31,7 @@ const upload = asyncHandler(async (req, res) => {
   const diagnosisData = await diagnosis.findOne({ diagnosis_code:req.body.diagnosis_code },{diagnosis_code:0,_id:0});
   if (diagnosisData==null) {
     res.status(400);
-    throw new Error("Diseasesnot found");
+    throw new Error("Diseases not found");
   }    
   const patientExists = await User.findOne({ username:patient_username });
   if (patientExists==null) {
