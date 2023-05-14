@@ -22,7 +22,7 @@ const addAccount = asyncHandler(async (req, res) => {
    // console.log(req.user)
    const accountExists = await account.findOne({$and:[{ address:req.body.address },{owner_username:req.user.username}]})
    const accounNumber=await account.countDocuments({owner_username:req.user.username})
-
+   const accountExst = await account.findOne({owner_username:req.user.username})
   if(accountExists){
     res.json({
     accountExist:true
@@ -32,7 +32,8 @@ const addAccount = asyncHandler(async (req, res) => {
   {
     res.json(
       {
-        anotherAccount:true
+        anotherAccount:true,
+        address:accountExst.address
       }
     )
 
