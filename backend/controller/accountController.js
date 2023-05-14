@@ -23,15 +23,18 @@ const addAccount = asyncHandler(async (req, res) => {
    const accountExists = await account.findOne({$and:[{ address:req.body.address },{owner_username:req.user.username}]})
    const accounNumber=await account.countDocuments({owner_username:req.user.username})
 
-  if(accountExists!=null){
+  if(accountExists){
     res.json({
     accountExist:true
     })
   }
-  else if(accounNumber>3)
+  else if(accounNumber==1)
   {
-    res.status(400);
-    throw new Error("Account Number Exceeded");
+    res.json(
+      {
+        anotherAccount:true
+      }
+    )
 
 
   }
