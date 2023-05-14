@@ -16,6 +16,6 @@ router1.route("/upload").post(
     protect,
     upload
     );
-router1.route("/download").get(nftDownload,protect,download);
+router1.route("/download").post(nftDownload,protect,download);
 
 module.exports = router1;
