@@ -23,7 +23,7 @@ const Patient = (props) => {
     const fetchDetails = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8000/api/details/check",
+          "http://localhost:8000/api/user/details/check",
           {
             method: "GET",
             headers: {
@@ -38,13 +38,14 @@ const Patient = (props) => {
           console.log(details);
           console.log(details._id);
           setDetails(details);
+        } else if (response.status == 400) {
+          setPop(true);
         } else {
           throw new Error("Request failed with status: " + response.status);
         }
       } catch (error) {
-        if (error == 400) {
-          setPop(true);
-        }
+        // console.log(error);
+
         console.log("Error: " + error.message);
       }
     };
@@ -105,6 +106,56 @@ const Patient = (props) => {
     console.log(cnt);
   }, [cnt]);
 
+  const acceptReq = async (request) => {
+    console.log(request._id);
+
+    const response = await fetch(
+      "http://localhost:8000/api/request/mint/check/accept",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tk}`,
+        },
+        body: JSON.stringify({ reqId: request._id }),
+      }
+    );
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      setCnt(cnt + 1);
+      // console.log(cnt);
+    } else {
+      throw new Error("Request failed with status: " + response.status);
+    }
+  };
+
+  const rejectReq = async (request) => {
+    const response = await fetch(
+      "http://localhost:8000/api/request/mint/check/decline",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tk}`,
+        },
+        body: JSON.stringify({ reqId: request._id }),
+      }
+    );
+    if (response.ok) {
+      const data = await response.json();
+      setCnt(cnt + 1);
+      console.log(data);
+    } else {
+      throw new Error("Request failed with status: " + response.status);
+    }
+  };
+
+  const detailsSubmit = async (e, Gender, BloodGroup, Dob) => {
+    e.preventDefault();
+    console.log(Dob);
+    setPop(false);
+  };
   // const { fileBase64String } = location.state;
   // console.log(fileBase64String);
   const records = ["Demo Post 1", "Demo Post 2", "Demo Post 3", "Demo Post 4"];
@@ -152,7 +203,7 @@ const Patient = (props) => {
           <RecordViewer base64String={fileBase64String} />
         </div>
       )}
-      {Pop && <PopUp />}
+      {Pop && <PopUp handleSubmit={detailsSubmit} />}
     </div>
   );
 };
