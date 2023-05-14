@@ -1,25 +1,26 @@
-import Hospital from "./pages/Hospital";
+import React from "react";
+import Home from "./pages/Home";
 import Patient from "./pages/Patient";
-import Home from "./pages/Home/Home";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import MintPage from "./pages/MintPage";
 import Researcher from "./pages/Researcher";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Hospital from "./pages/Hospital";
+import MintNft from "./pages/MintNft";
 
-const App = () => {
+function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />}></Route>
-          <Route path="/Hospital" element={<Hospital />}></Route>
           <Route path="/Patient" element={<Patient />}></Route>
+
+          <Route path="/Hospital" element={<Hospital />}></Route>
           <Route path="/Researcher" element={<Researcher />}></Route>
-          <Route path="/Hospital/Mint" element={<MintPage />}>
-            {" "}
-          </Route>
+          <Route path="/Hospital/Mint" element={<MintNft />}></Route>
         </Routes>
       </BrowserRouter>
     </>
   );
-};
+}
+
 export default App;
