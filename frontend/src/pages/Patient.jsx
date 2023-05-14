@@ -36,10 +36,11 @@ const Patient = (props) => {
         if (response.ok) {
           const details = await response.json();
           console.log(details);
+          if (!details.detail) {
+            setPop(true);
+          }
           console.log(details._id);
           setDetails(details);
-        } else if (response.status == 400) {
-          setPop(true);
         } else {
           throw new Error("Request failed with status: " + response.status);
         }
@@ -153,6 +154,27 @@ const Patient = (props) => {
 
   const detailsSubmit = async (e, Gender, BloodGroup, Dob) => {
     e.preventDefault();
+
+    const response = await fetch("http://localhost:8000/api/user/details", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tk}`,
+      },
+      body: JSON.stringify({
+        gender: Gender,
+        bloodGroup: BloodGroup,
+        DateOfBirth: Dob,
+      }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      setCnt(cnt + 1);
+      console.log(data);
+    } else {
+      throw new Error("Request failed with status: " + response.status);
+    }
+
     console.log(Dob);
     setPop(false);
   };
