@@ -21,6 +21,15 @@ const RecordContainer = (props) => {
     setRemainingSeconds(seconds);
   };
 
+  const calculateAge = (birthdate) => {
+    const birthdateObj = new Date(birthdate);
+    const currentDate = new Date();
+    const diffInMilliseconds = currentDate - birthdateObj;
+    const ageDate = new Date(diffInMilliseconds);
+    const calculatedAge = Math.abs(ageDate.getUTCFullYear() - 1970);
+    return calculatedAge;
+  };
+
   return (
     <div className="flex flex-wrap mt-1 overflow-y-auto gap-2 h-[calc(100vh-110px)] scrollbar-hide sm:w-[60%]  md:w-[50%] lg:w-[40%]">
       {records.map((record, index) => (
@@ -37,7 +46,7 @@ const RecordContainer = (props) => {
             <div className="grid justify-items-start px-8 py-2">
               {/* <p>Diagnosis:</p> */}
               <p>Gender:{record.gender}</p>
-              <p>Age:</p>
+              <p>Age: {calculateAge(record.dateOfBirth)}</p>
               <p>Blood Group:{record.bloodGroup}</p>
             </div>
           </div>

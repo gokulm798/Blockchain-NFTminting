@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar } from "../components/Navbar";
 import SearchBar from "../components/SearchBar";
 import RecordContainer from "../components/RecordContainer";
@@ -8,8 +8,38 @@ import PopUp from "../components/PopUp";
 const Researcher = () => {
   const [currentTab, setCurrentTab] = useState("history");
   const [expanded, setExpanded] = useState(false);
-  const records = ["Demo Post 1", "Demo Post 2", "Demo Post 3"];
+  const [Feed, setFeed] = useState([]);
+  // const records = ["Demo Post 1", "Demo Post 2", "Demo Post 3"];
   const requests = ["Demo Request 1", "Demo Request 2"];
+  const tk = sessionStorage.getItem("tk");
+  useEffect(() => {
+    const fetchFeed = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/feed/", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${tk}`,
+          },
+        });
+
+        if (response.ok) {
+          const feed = await response.json();
+          console.log(feed);
+
+          //  console.log(details._id);
+          setFeed(feed);
+        } else {
+          throw new Error("Request failed with status: " + response.status);
+        }
+      } catch (error) {
+        // console.log(error);
+
+        console.log("Error: " + error.message);
+      }
+    };
+    fetchFeed();
+  }, []);
 
   const handleViewNft = (e) => {
     e.preventDefault();
@@ -34,7 +64,7 @@ const Researcher = () => {
       <div className="flex justify-center ">
         {currentTab === "history" ? (
           <RecordContainer
-            records={records}
+            records={Feed}
             recordView={handleViewNft}
             expanded={expanded}
           />
