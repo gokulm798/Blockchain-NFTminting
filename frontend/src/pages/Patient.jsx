@@ -106,6 +106,51 @@ const Patient = (props) => {
     console.log(cnt);
   }, [cnt]);
 
+  const acceptReq = async (request) => {
+    console.log(request._id);
+
+    const response = await fetch(
+      "http://localhost:8000/api/request/mint/check/accept",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tk}`,
+        },
+        body: JSON.stringify({ reqId: request._id }),
+      }
+    );
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      setCnt(cnt + 1);
+      // console.log(cnt);
+    } else {
+      throw new Error("Request failed with status: " + response.status);
+    }
+  };
+
+  const rejectReq = async (request) => {
+    const response = await fetch(
+      "http://localhost:8000/api/request/mint/check/decline",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tk}`,
+        },
+        body: JSON.stringify({ reqId: request._id }),
+      }
+    );
+    if (response.ok) {
+      const data = await response.json();
+      setCnt(cnt + 1);
+      console.log(data);
+    } else {
+      throw new Error("Request failed with status: " + response.status);
+    }
+  };
+
   const detailsSubmit = async (e, Gender, BloodGroup, Dob) => {
     e.preventDefault();
     console.log(Dob);
