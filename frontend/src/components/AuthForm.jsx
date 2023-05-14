@@ -87,7 +87,7 @@ const Login = (props, { onSubmit }) => {
           // console.warn("moonji");
           const un = data.username;
           sessionStorage.setItem("tk", tk);
-          nav(`/Patient`, {
+          nav(`/${pg}`, {
             state: {
               nm,
               un,

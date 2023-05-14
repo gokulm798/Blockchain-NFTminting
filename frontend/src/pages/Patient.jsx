@@ -23,7 +23,7 @@ const Patient = (props) => {
     const fetchDetails = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8000/api/details/check",
+          "http://localhost:8000/api/user/details/check",
           {
             method: "GET",
             headers: {
@@ -38,13 +38,14 @@ const Patient = (props) => {
           console.log(details);
           console.log(details._id);
           setDetails(details);
+        } else if (response.status == 400) {
+          setPop(true);
         } else {
           throw new Error("Request failed with status: " + response.status);
         }
       } catch (error) {
-        if (error == 400) {
-          setPop(true);
-        }
+        // console.log(error);
+
         console.log("Error: " + error.message);
       }
     };
@@ -105,6 +106,11 @@ const Patient = (props) => {
     console.log(cnt);
   }, [cnt]);
 
+  const detailsSubmit = async (e, Gender, BloodGroup, Dob) => {
+    e.preventDefault();
+    console.log(Dob);
+    setPop(false);
+  };
   // const { fileBase64String } = location.state;
   // console.log(fileBase64String);
   const records = ["Demo Post 1", "Demo Post 2", "Demo Post 3", "Demo Post 4"];
@@ -152,7 +158,7 @@ const Patient = (props) => {
           <RecordViewer base64String={fileBase64String} />
         </div>
       )}
-      {Pop && <PopUp />}
+      {Pop && <PopUp handleSubmit={detailsSubmit} />}
     </div>
   );
 };
