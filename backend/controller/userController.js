@@ -186,8 +186,11 @@ const patientDetailsCheck = asyncHandler(async (req, res) => {
     return;
   }
   else{
-    res.status(400);
-    throw new Error("Please Enter Details");
+    res.json(
+      {
+        detail:false
+      })
+    
   }
 });
 
