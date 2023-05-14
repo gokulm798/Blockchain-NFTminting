@@ -66,7 +66,7 @@ const userRequest = asyncHandler(async (req, res) => {
 const reqCheck = asyncHandler(async (req, res) => {
   
 
-  const reqs = await nftRequest.find({$and:[{ request_to:req.user.username },{isRead:'false'}]});
+  const reqs = await nftRequest.find({$and:[{ request_to:req.user.username },{isUserRead:false}]});
 
   if (reqs) {
     res.send(reqs)
@@ -123,7 +123,7 @@ const reqDecline = asyncHandler(async (req, res) => {
 const senderReq = asyncHandler(async (req, res) => {
   
 
-    const reqs = await nftRequest.find({$and:[{ sender_username:req.user.username },{isSenderRead:'false'}]});
+    const reqs = await nftRequest.find({$and:[{ sender_username:req.user.username },{isSenderRead:false}]});
   
     if (reqs) {
       res.send(reqs)
@@ -193,7 +193,7 @@ const userRequestLicense = asyncHandler(async (req, res) => {
 const reqCheckLicense = asyncHandler(async (req, res) => {
   
 
-  const reqs = await licenseRequest.find({$and:[{ request_to:req.user.username },{isRead:'false'}]});
+  const reqs = await licenseRequest.find({$and:[{ request_to:req.user.username },{isUserRead:false}]});
 
   if (reqs) {
     res.send(reqs)
@@ -250,7 +250,7 @@ const reqDeclineLicense = asyncHandler(async (req, res) => {
 const senderReqLicense = asyncHandler(async (req, res) => {
   
 
-    const reqs = await licenseRequest.find({$and:[{ sender_username:req.user.username },{isSenderRead:'false'}]});
+    const reqs = await licenseRequest.find({$and:[{ sender_username:req.user.username },{isSenderRead:false}]});
   
     if (reqs) {
       res.send(reqs)

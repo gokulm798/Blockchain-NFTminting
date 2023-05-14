@@ -36,7 +36,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const userExists = await User.findOne({ username });
 
   if (userExists) {
-    res.status(400);
+    res.status(401);
     throw new Error("User already exists");
   }
 
@@ -55,7 +55,7 @@ const registerUser = asyncHandler(async (req, res) => {
       token: generateToken(user._id),
     });
   } else {
-    res.status(400);
+    res.status(401);
     throw new Error("User not found");
   }
 });
@@ -100,10 +100,7 @@ res.send(historyData)
 const patientDetails = asyncHandler(async (req, res) => {
   const {DateOfBirth,gender,bloodGroup } = req.body;
 
-  if ( !DateOfBirth || !gender || !bloodGroup) {
-    res.status(400);
-    throw new Error("Please Enter all the Feilds");
-  }
+  
    const dateOfBirth=new Date(DateOfBirth)
    const username=req.user.username
 
@@ -119,8 +116,20 @@ const patientDetails = asyncHandler(async (req, res) => {
   const patientDetailExists = await detail.findOne({ username :username});
 
   if (patientDetailExists) {
+    
+    res.status(200).json({
+    
+      username: username,
+      dateOfBirth:patientDetailExists.dateOfBirth,
+      gender:patientDetailExists.gender,
+      bloodGroup:patientDetailExists.bloodGroup,
+      
+    });
+    return;
+  }
+  if ( !DateOfBirth || !gender || !bloodGroup) {
     res.status(400);
-    throw new Error("Details already Entered ");
+    throw new Error("Please Enter all the Feilds");
   }
 
   const patDetails = await detail.create({
