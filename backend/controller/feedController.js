@@ -12,7 +12,7 @@ const feed = asyncHandler(async (req, res) => {
    // console.log(req.user)
 
   const feeds = await data.aggregate([
-    { $sample: { size: 5 } }
+    { $sample: { size: 10 } }
 ])
 res.send(feeds)
 
@@ -21,18 +21,17 @@ res.send(feeds)
 
 
 
-//@description     Get the feed to users
-//@route           GET /api/feed/
+//@description     To  search feed to users
+//@route           POST /api/feed/
 //@access          Public
 const feedSearch = asyncHandler(async (req, res) => {
   const keyword=req.body.keyword
   //console.log(keyword)
    
   // console.log(req.user)
-  const feeds = await data.find({ $or: [ 
-    { name: { $regex: keyword, $options: "i" } },
-    { username: { $regex: keyword, $options: "i" } },]},{password:0})
-    .find({ _id: { $ne: req.user._id } });
+  const feeds = await data.find( 
+    { diagnosis_disease: { $regex: keyword, $options: "i" } },{})
+    
   
 res.send(feeds);
 

@@ -7,7 +7,7 @@ const router = express.Router()
 
 
 router.route("/").get(protect, feed);
-router.route("/search").get(protect, feedSearch);
+router.route("/search").post(protect, feedSearch);
 
 
 module.exports = router;
