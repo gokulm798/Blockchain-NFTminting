@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
+
 const Hospital = () => {
   const location = useLocation();
 
   const [selectedFile, setSelectedFile] = useState([]);
+  const [Pid, setPid] = useState("");
+  const [Doc, setDoc] = useState("");
+  const [DiaCode, setDiaCode] = useState("");
+
   const suggestions = ["Apple", "Apricot"];
 
   const data = location.state;
@@ -11,9 +17,33 @@ const Hospital = () => {
 
   const [fileBase64String, setFileBase64String] = useState("");
   const nav = useNavigate();
-  const dataSubmit = (e) => {
+  const dataSubmit = async (e) => {
     e.preventDefault();
-    nav("/Hospital/Mint", { state: { tk } });
+    console.log(fileBase64String);
+    const tokenId = uuidv4();
+    const response = await fetch("http://localhost:8000/api/nft/upload", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tk}`,
+      },
+      body: JSON.stringify({
+        token_id: tokenId,
+        patient_username: Pid,
+        hash: fileBase64String,
+        diagnosis_code: DiaCode,
+        doc_name: Doc,
+      }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      setCnt(cnt + 1);
+      nav("/Hospital/Mint", { state: { tk } });
+      // console.log(cnt);
+    } else {
+      throw new Error("Request failed with status: " + response.status);
+    }
   };
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files);
@@ -44,15 +74,29 @@ const Hospital = () => {
         className="bg-primary text-white w-[600px] p-7 border-green-500 border-2 rounded-md"
         onSubmit={dataSubmit}
       >
-        <InputBox type={"text"} list={"suggestions"} label="Patient Name/Id">
-          <datalist id="suggestions" className="bg-white">
+        <InputBox
+          type={"text"}
+          list={"suggestions"}
+          label="Patient Name/Id"
+          value={Pid}
+          onChange={(event) => setPid(event.target.value)}
+        />
+        {/* <datalist id="suggestions" className="bg-white">
             {suggestions.map((suggestion, index) => (
               <option key={index} value={suggestion} />
             ))}
-          </datalist>
-        </InputBox>
-        <InputBox label="Docter's Name"></InputBox>
-        <InputBox label="Diagnosis Code"></InputBox>
+          </datalist> */}
+
+        <InputBox
+          label="Docter's Name"
+          value={Doc}
+          onChange={(event) => setDoc(event.target.value)}
+        ></InputBox>
+        <InputBox
+          label="Diagnosis Code"
+          value={DiaCode}
+          onChange={(event) => setDiaCode(event.target.value)}
+        ></InputBox>
         <InputBox type={"file"} onChange={handleFileChange} />
         <button
           type="submit"

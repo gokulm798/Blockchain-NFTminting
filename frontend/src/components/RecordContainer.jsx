@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { FiTag } from "react-icons/fi";
 const RecordContainer = (props) => {
-  const { records, recordView, expanded } = props;
+  const { records, recordView, licenseNft, expanded } = props;
   const [licBtnVal, setLicBtnVal] = useState(new Date());
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [expandedRecord, setExpandedRecord] = useState(-1);
+  // const [cid, setCid] = useState("");
+  let cid = "";
   const handleLicense = (e) => {
     e.preventDefault();
   };
@@ -36,9 +38,17 @@ const RecordContainer = (props) => {
         <div
           key={index}
           className=" bg-green-200/60 m-h-[200px]  text-xl text-white font-mono w-full p-4 rounded-md border-2 border-green-400"
-          onClick={() => setExpandedRecord(index)}
+          onClick={() => {
+            // setCid(record.cid);
+            console.log(record.cid);
+
+            cid = record.cid;
+            recordView(cid);
+            // console.log(cid);
+            setExpandedRecord(index);
+          }}
         >
-          <div className="w-full" onClick={recordView}>
+          <div className="w-full" onClick={licenseNft}>
             <div className="flex justify-between items-center px-2">
               <h2 className="px-4 text-2xl">{record.diagnosis_disease}</h2>
               <FiTag />

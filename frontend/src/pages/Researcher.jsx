@@ -9,8 +9,9 @@ const Researcher = () => {
   const [currentTab, setCurrentTab] = useState("history");
   const [expanded, setExpanded] = useState(false);
   const [Feed, setFeed] = useState([]);
+  const [Request, setRequest] = useState([]);
   // const records = ["Demo Post 1", "Demo Post 2", "Demo Post 3"];
-  const requests = ["Demo Request 1", "Demo Request 2"];
+  // const requests = ["Demo Request 1", "Demo Request 2"];
   const tk = sessionStorage.getItem("tk");
   useEffect(() => {
     const fetchFeed = async () => {
@@ -41,6 +42,86 @@ const Researcher = () => {
     fetchFeed();
   }, []);
 
+  /*
+
+
+
+
+useEffect(() => {
+  const fetchReq = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/request/mint/check",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${tk}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        console.log(data._id);
+        setRequest(data);
+      } else {
+        throw new Error("Request failed with status: " + response.status);
+      }
+    } catch (error) {
+      console.log("Error: " + error.message);
+    }
+  };
+  fetchReq();
+  console.log(cnt);
+}, [cnt]);
+
+const acceptReq = async (request) => {
+  console.log(request._id);
+
+  const response = await fetch(
+    "http://localhost:8000/api/request/mint/check/accept",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tk}`,
+      },
+      body: JSON.stringify({ reqId: request._id }),
+    }
+  );
+  if (response.ok) {
+    const data = await response.json();
+    console.log(data);
+    setCnt(cnt + 1);
+    // console.log(cnt);
+  } else {
+    throw new Error("Request failed with status: " + response.status);
+  }
+};
+
+const rejectReq = async (request) => {
+  const response = await fetch(
+    "http://localhost:8000/api/request/mint/check/decline",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tk}`,
+      },
+      body: JSON.stringify({ reqId: request._id }),
+    }
+  );
+  if (response.ok) {
+    const data = await response.json();
+    setCnt(cnt + 1);
+    console.log(data);
+  } else {
+    throw new Error("Request failed with status: " + response.status);
+  }
+};*/
+
   const handleViewNft = (e) => {
     e.preventDefault();
     setExpanded(!expanded);
@@ -65,7 +146,7 @@ const Researcher = () => {
         {currentTab === "history" ? (
           <RecordContainer
             records={Feed}
-            recordView={handleViewNft}
+            licenseNft={handleViewNft}
             expanded={expanded}
           />
         ) : (

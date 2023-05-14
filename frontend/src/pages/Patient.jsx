@@ -36,8 +36,11 @@ const Patient = (props) => {
         if (response.ok) {
           const details = await response.json();
           console.log(details);
-          if (!details.detail) {
-            setPop(true);
+          if (details) {
+            if (details.detail == false) {
+              console.log("hi");
+              setPop(true);
+            }
           }
           console.log(details._id);
           setDetails(details);
@@ -183,8 +186,31 @@ const Patient = (props) => {
   const records = ["Demo Post 1", "Demo Post 2", "Demo Post 3", "Demo Post 4"];
   // const record = [{ hi: "demo" }];
   // const requests = ["Demo Request 1", "Demo Request 2"];
-  const handleRecordView = () => {
-    setVeiw(true);
+  const handleRecordView = async (cid) => {
+    console.log(cid);
+    try {
+      const response = await fetch("http://localhost:8000/api/nft/download", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tk}`,
+        },
+        body: JSON.stringify({ cid }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        console.log(data.Content);
+        // setRequest(data);
+      } else {
+        throw new Error("Request failed with status: " + response.status);
+      }
+    } catch (error) {
+      console.log("Error: " + error.message);
+    }
+
+    // setVeiw(true);
   };
   return (
     <div>
