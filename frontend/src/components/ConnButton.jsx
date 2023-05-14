@@ -28,7 +28,8 @@ const ConnButton = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        if (data.anotherAccount) {
+        }
       } else {
         throw new Error("Request failed with status: " + response.status);
       }
