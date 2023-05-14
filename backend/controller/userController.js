@@ -99,9 +99,67 @@ res.send(historyData)
 //@access          Public
 const patientDetails = asyncHandler(async (req, res) => {
   const {DateOfBirth,gender,bloodGroup } = req.body;
+  if ( !DateOfBirth || !gender || !bloodGroup) {
+    res.status(400);
+    throw new Error("Please Enter all the Feilds");
+  }
+
 
   
    const dateOfBirth=new Date(DateOfBirth)
+   const username=req.user.username
+
+  
+
+  const userExists = await User.findOne({ username });
+
+  if (userExists==null) {
+    res.status(400);
+    throw new Error("User Not Found");
+  }
+
+  const patientDetailExists = await detail.findOne({ username :username});
+
+  if (patientDetailExists) {
+    
+    res.status(400).json({
+    
+     DetailExist:true
+      
+    });
+    return;
+  }
+  
+  const patDetails = await detail.create({
+    username,
+    dateOfBirth,
+    gender,
+    bloodGroup, 
+  });
+
+  if (patDetails) {
+    res.status(201).json({
+    
+      username: username,
+      dateOfBirth:dateOfBirth,
+      gender:gender,
+      bloodGroup:bloodGroup,
+      
+    });
+  } else {
+    res.status(400);
+    throw new Error("Details Not Uploaded");
+  }
+});
+
+//@description     To Enter Patient's Details
+//@route           POST /api/user/details
+//@access          Public
+const patientDetailsCheck = asyncHandler(async (req, res) => {
+  
+
+  
+   
    const username=req.user.username
 
   
@@ -127,35 +185,13 @@ const patientDetails = asyncHandler(async (req, res) => {
     });
     return;
   }
-  if ( !DateOfBirth || !gender || !bloodGroup) {
+  else{
     res.status(400);
-    throw new Error("Please Enter all the Feilds");
-  }
-
-  const patDetails = await detail.create({
-    username,
-    dateOfBirth,
-    gender,
-    bloodGroup, 
-  });
-
-  if (patDetails) {
-    res.status(201).json({
-    
-      username: username,
-      dateOfBirth:dateOfBirth,
-      gender:gender,
-      bloodGroup:bloodGroup,
-      
-    });
-  } else {
-    res.status(400);
-    throw new Error("Details Not Uploaded");
+    throw new Error("Please Enter Details");
   }
 });
 
 
 
 
-
-module.exports = { registerUser, authUser ,allUsers, history, patientDetails };
+module.exports = { registerUser, authUser ,allUsers, history, patientDetails, patientDetailsCheck };

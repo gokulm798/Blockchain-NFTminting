@@ -51,15 +51,9 @@ const userRequest = asyncHandler(async (req, res) => {
 //@route           GET /api/request/mint/check
 //@access          Public
 const reqCheck = asyncHandler(async (req, res) => {
-<<<<<<< HEAD
-  
-
-  const reqs = await nftRequest.find({$and:[{ request_to:req.user.username },{isUserRead:false}]});
-=======
   const reqs = await nftRequest.find({
     $and: [{ request_to: req.user.username }, { isUserRead: false }],
   });
->>>>>>> refs/remotes/origin/main
 
   if (reqs) {
     res.send(reqs);
@@ -106,22 +100,8 @@ const reqDecline = asyncHandler(async (req, res) => {
 //@route           GET /api/request/mint/senderCheck
 //@access          Public
 const senderReq = asyncHandler(async (req, res) => {
-<<<<<<< HEAD
-  
-
-    const reqs = await nftRequest.find({$and:[{ sender_username:req.user.username },{isSenderRead:false}]});
-  
-    if (reqs) {
-      res.send(reqs)
-      }
-     else {
-      res.send("Request Not Found");
-      
-    }
-=======
   const reqs = await nftRequest.find({
     $and: [{ sender_username: req.user.username }, { isSenderRead: false }],
->>>>>>> refs/remotes/origin/main
   });
 
   if (reqs) {
@@ -179,15 +159,9 @@ const userRequestLicense = asyncHandler(async (req, res) => {
 //@route           GET /api/request/license/check
 //@access          Public
 const reqCheckLicense = asyncHandler(async (req, res) => {
-<<<<<<< HEAD
-  
-
-  const reqs = await licenseRequest.find({$and:[{ request_to:req.user.username },{isUserRead:false}]});
-=======
   const reqs = await licenseRequest.find({
     $and: [{ request_to: req.user.username }, { isUserRead: false }],
   });
->>>>>>> refs/remotes/origin/main
 
   if (reqs) {
     res.send(reqs);
@@ -234,22 +208,8 @@ const reqDeclineLicense = asyncHandler(async (req, res) => {
 //@route           GET /api/request/license/senderCheck
 //@access          Public
 const senderReqLicense = asyncHandler(async (req, res) => {
-<<<<<<< HEAD
-  
-
-    const reqs = await licenseRequest.find({$and:[{ sender_username:req.user.username },{isSenderRead:false}]});
-  
-    if (reqs) {
-      res.send(reqs)
-      }
-     else {
-      res.send("Request Not Found");
-      
-    }
-=======
   const reqs = await licenseRequest.find({
     $and: [{ sender_username: req.user.username }, { isSenderRead: false }],
->>>>>>> refs/remotes/origin/main
   });
 
   if (reqs) {
