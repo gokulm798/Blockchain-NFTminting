@@ -9,6 +9,7 @@ const Researcher = () => {
   const [currentTab, setCurrentTab] = useState("history");
   const [expanded, setExpanded] = useState(false);
   const [Feed, setFeed] = useState([]);
+  const [OrgFeed, setOrgFeed] = useState([]);
   const [Request, setRequest] = useState([]);
   // const records = ["Demo Post 1", "Demo Post 2", "Demo Post 3"];
   // const requests = ["Demo Request 1", "Demo Request 2"];
@@ -30,6 +31,7 @@ const Researcher = () => {
 
           //  console.log(details._id);
           setFeed(feed);
+          setOrgFeed(feed);
         } else {
           throw new Error("Request failed with status: " + response.status);
         }
@@ -122,6 +124,39 @@ const rejectReq = async (request) => {
   }
 };*/
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+
+    const response = await fetch("http://localhost:8000/api/feed/search/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tk}`,
+      },
+      body: JSON.stringify({ keyword: e.target.value }),
+    });
+    if (response.ok) {
+      const datas = await response.json();
+      console.log(datas);
+      if (!e.target.value) return setFeed(OrgFeed);
+      setFeed(
+        datas.filter((data) => {
+          const lowerCaseValue = e.target.value.toLowerCase();
+          const lowerCaseDisease = data.diagnosis_disease.toLowerCase();
+
+          return (
+            lowerCaseDisease.startsWith(lowerCaseValue) ||
+            lowerCaseDisease.includes(lowerCaseValue)
+          );
+        })
+      );
+    } else {
+      throw new Error("Request failed with status: " + response.status);
+    }
+
+    // useEffect(() => {}, [rsltArray]);
+  };
+
   const handleViewNft = (e) => {
     e.preventDefault();
     setExpanded(!expanded);
@@ -133,13 +168,13 @@ const rejectReq = async (request) => {
       <Navbar items={[]} />
       <div className=" w-screen py-1 bg-white/10 text-white text-sm flex justify-center items-center gap-2 ">
         <a href="#" onClick={() => setCurrentTab("history")}>
-          History
+          Feeds
         </a>
         <a href="#" onClick={() => setCurrentTab("requests")}>
           Requests
         </a>
         <div className="relative ml-8 ">
-          <SearchBar />
+          <SearchBar handleSearch={handleSearch} />
         </div>
       </div>
       <div className="flex justify-center ">

@@ -40,7 +40,8 @@ const MintNft = () => {
     e.preventDefault();
     console.log(e.target.UserID.value);
     request_to = e.target.UserID.value;
-    Content = e.target.Content.value;
+    // Content = e.target.Content.value;
+    Content = "Mint your medical records as NFT";
     const result = await fetch("http://localhost:8000/api/request/mint", {
       method: "POST",
       headers: {
@@ -94,16 +95,27 @@ const MintNft = () => {
     <>
       <Navbar items={["Demo 1", "Demo 2"]} handleItemClick={handleItemClick} />
 
-      <div className="flex justify-center">
-        <div>
-          <form className="mintForm " onSubmit={reqApproval}>
-            <div className="mintContainer">
-              <input id="UserID" placeholder="UserID" type={"text"} />
-              <input id="Content" placeholder="Content" type={"text"}></input>
-              <button type="submit">{ReqBtn}</button>
-            </div>
-          </form>
-        </div>
+      <div className="flex justify-center items-center">
+        {/* <div> */}
+        <form
+          className="mintForm bg-primary/100 w-56 h-36 p-5 rounded-xl border-2 border-green-400"
+          onSubmit={reqApproval}
+        >
+          <input
+            id="UserID"
+            className=" mb-3 border-b-[1px] border-solid w-full border-white bg-transparent focus:outline-none my-6"
+            placeholder="UserID"
+            type={"text"}
+          />
+          {/* <input id="Content" placeholder="Content" type={"text"}></input> */}
+          <button
+            className="border-none text-white hover:bg-green-400 duration-300"
+            type="submit"
+          >
+            {ReqBtn}
+          </button>
+        </form>
+        {/* </div> */}
         {/* {CreBtn && (
           <div>
             <form onSubmit={creNft}>
