@@ -1,136 +1,155 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
+import React, { useState } from "react";
+import { Navbar } from "../components/Navbar";
+import axios from "axios";
+import { useLocation } from "react-router-dom";
+import RequestContainer from "../components/RequestContainer";
 
 const Hospital = () => {
-  const location = useLocation();
+  // const location = useLocation();
+  const [currentTab, setCurrentTab] = useState("Home");
 
-  const [selectedFile, setSelectedFile] = useState([]);
-  const [Pid, setPid] = useState("");
-  const [Doc, setDoc] = useState("");
-  const [DiaCode, setDiaCode] = useState("");
+  // const data = location.state;
+  // const tk = data.tk;
+  // Get data from session storage
+  const tk = sessionStorage.getItem("tk");
 
-  const suggestions = ["Apple", "Apricot"];
+  console.log(tk);
 
-  const data = location.state;
-  const tk = data.tk;
+  // const [Btn, setBtn] = useState("Connect Wallet");
+  const [ReqBtn, setReq] = useState("Request");
+  let request_to, Content;
+  // const [request_to, setRequest_to] = useState();
+  // const [Content, setContent] = useState();
+  // const [Acc, setAcc] = useState(null);
+  // const [CreBtn, setCreBtn] = useState(null);
 
-  const [fileBase64String, setFileBase64String] = useState("");
-  const nav = useNavigate();
-  const dataSubmit = async (e) => {
+  // const connWallet = async () => {
+  //   if (window.ethereum) {
+  //     // console.log("Metamask detected");
+  //     const Acc = await window.ethereum.request({
+  //       method: "eth_requestAccounts",
+  //     });
+  //     // debugger;
+
+  //     const accounts = await provider.listAccounts();
+  //     setBtn("Connected");
+  //     setAcc(accounts);
+  //     // console.log(accounts);
+  //   }
+  // };
+  // `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NWZiNjQ2YzkzZGFlNGQ2YTQzY2ZlOCIsImlhdCI6MTY4Mzk5NDE4MywiZXhwIjoxNjg2NTg2MTgzfQ.SORh5FXSTAsmbgPwtlTfVs50h6Vu1AlxJQUsU7WOP4o`,
+
+  const reqApproval = async (e) => {
     e.preventDefault();
-    console.log(fileBase64String);
-    const tokenId = uuidv4();
-    const response = await fetch("http://localhost:8000/api/nft/upload", {
+    console.log(e.target.UserID.value);
+    request_to = e.target.UserID.value;
+    // Content = e.target.Content.value;
+    Content = "Mint your medical records as NFT";
+    const result = await fetch("http://localhost:8000/api/request/mint", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${tk}`,
       },
-      body: JSON.stringify({
-        token_id: tokenId,
-        patient_username: Pid,
-        hash: fileBase64String,
-        diagnosis_code: DiaCode,
-        doc_name: Doc,
-      }),
-    });
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
-      setCnt(cnt + 1);
-      nav("/Hospital/Mint", { state: { tk } });
-      // console.log(cnt);
-    } else {
-      throw new Error("Request failed with status: " + response.status);
-    }
-  };
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files);
-    console.log(e.target.files[0]);
-  };
-  const encodeFileBase64 = (file) => {
-    var reader = new FileReader();
-    if (file) {
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        var Base64 = reader.result;
-        console.log(Base64.substring(Base64.indexOf(",") + 1));
-        // console.log(Base64);
-        setFileBase64String(Base64.substring(Base64.indexOf(",") + 1));
-      };
-      reader.onerror = (error) => {
-        console.log("error: ", error);
-      };
-    }
-  };
-  useEffect(() => {
-    encodeFileBase64(selectedFile[0]);
-  }, [selectedFile]);
+      body: JSON.stringify({ request_to, Content }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data.request);
+      })
+      .catch((err) => {
+        console.log("error:" + err);
+      });
 
+    // setResult(result.output);
+  };
+
+  //   e.preventDefault();
+  //   let tk = parseInt(e.target.tokenID.value);
+  //   console.log(Acc);
+  //   // console.log(String(Acc));
+  //   contract.setOwnersAndRequestApproval(
+  //     String(Acc),
+  //     e.target.patAdd.value,
+  //     tk
+  //   );
+  //   setCreBtn("Create");
+  // };
+
+  // const creNft = async (e) => {
+  //   e.preventDefault();
+
+  // let t = parseInt(e.target.tokenId.value);
+  // // let nm=document.getElementById("nftName").value;
+  // let nm = e.target.nftName.value;
+  // let desc = e.target.nftDesc.value;
+  // let doc = e.target.nftDoc.value;
+  // console.log(nm);
+  // if (nm) {
+  //   // console.log(desc)
+  //   contract.createNFT(t, nm, desc, doc);
+  // }
+  // };
+
+  const handleItemClick = (text) => {
+    console.log(text);
+  };
   return (
-    <div className="flex justify-center items-center h-[100vh] w-screen gap-2 ">
-      <form
-        className="bg-primary text-white w-[600px] p-7 border-green-500 border-2 rounded-md"
-        onSubmit={dataSubmit}
-      >
-        <InputBox
-          type={"text"}
-          list={"suggestions"}
-          label="Patient Name/Id"
-          value={Pid}
-          onChange={(event) => setPid(event.target.value)}
-        />
-        {/* <datalist id="suggestions" className="bg-white">
-            {suggestions.map((suggestion, index) => (
-              <option key={index} value={suggestion} />
-            ))}
-          </datalist> */}
+    <>
+      <Navbar items={["Demo 1", "Demo 2"]} handleItemClick={handleItemClick} />
 
-        <InputBox
-          label="Docter's Name"
-          value={Doc}
-          onChange={(event) => setDoc(event.target.value)}
-        ></InputBox>
-        <InputBox
-          label="Diagnosis Code"
-          value={DiaCode}
-          onChange={(event) => setDiaCode(event.target.value)}
-        ></InputBox>
-        <InputBox type={"file"} onChange={handleFileChange} />
-        <button
-          type="submit"
-          className="bg-green-700/40 border-none w-2/3 mx-3 hover:brightness-150 duration-500"
-        >
-          Submit
-        </button>
-        <button
-          type=""
-          className=" bg-red-700/40 text-white w-1/4 border-none hover:brightness-150 duration-500"
-        >
-          Clear
-        </button>
-      </form>
-    </div>
+      <div className=" w-screen py-1 bg-white/10 text-white text-sm flex justify-center items-center gap-10 ">
+        <a href="#" onClick={() => setCurrentTab("Home")}>
+          Home
+        </a>
+        <a href="#" onClick={() => setCurrentTab("Notifications")}>
+          Notifications
+        </a>
+        {/* <div className="relative ml-8 ">
+          <SearchBar handleSearch={handleSearch} />
+        </div> */}
+      </div>
+      <div className="flex justify-center items-center">
+        {currentTab === "Home" ? (
+          <>
+            <form
+              className="mintForm bg-primary/100 w-56 h-36 p-5 rounded-xl border-2 border-green-400"
+              onSubmit={reqApproval}
+            >
+              <input
+                id="UserID"
+                className=" mb-3 border-b-[1px] border-solid w-full border-white bg-transparent focus:outline-none my-6"
+                placeholder="UserID"
+                type={"text"}
+              />
+              {/* <input id="Content" placeholder="Content" type={"text"}></input> */}
+              <button
+                className="border-none text-white hover:bg-green-400 duration-300"
+                type="submit"
+              >
+                {ReqBtn}
+              </button>
+            </form>
+            {/* </div> */}
+            {/* {CreBtn && (
+          <div>
+            <form onSubmit={creNft}>
+              <input id="tokenId" placeholder="Token" type={"text"} />
+              <input id="nftName" placeholder="Name" type={"text"} />
+              <input id="nftDesc" placeholder="Description" type={"text"} />
+              <input id="nftDoc" placeholder="String" type={"text"} />
+              <button type="submit">{CreBtn}</button>
+            </form>
+          </div>
+        )} */}
+          </>
+        ) : (
+          <RequestContainer requests={Request} />
+        )}
+      </div>
+      <div className="flex justify-center items-center">{/* <div> */}</div>
+    </>
   );
 };
 
 export default Hospital;
-
-const InputBox = ({ label, list, type, placeholder, value, onChange }) => {
-  return (
-    <>
-      <div className=" grid grid-cols-3 items-center ">
-        <label className="relative col-span-1">{label}</label>
-        <input
-          className=" mb-3 border-b-[1px] border-solid w-full border-white/40 bg-transparent focus:outline-none my-5 col-span-2"
-          type={type}
-          list={list}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-        />
-      </div>
-    </>
-  );
-};

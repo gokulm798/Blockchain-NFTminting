@@ -9,11 +9,11 @@ const ConnButton = () => {
   const connWallet = async () => {
     if (window.ethereum) {
       // console.log("Metamask detected");
-      const Acc = await window.ethereum.request({
+      const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
 
-      const accounts = await provider.listAccounts();
+      // const accounts = await provider.listAccounts();
       setConBtn(
         String(accounts).substring(0, 4) + "...." + String(accounts).substr(-4)
       );
