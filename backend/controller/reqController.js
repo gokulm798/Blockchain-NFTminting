@@ -121,13 +121,13 @@ const senderReq = asyncHandler(async (req, res) => {
 //@route           POST /api/request/license
 //@access          Public
 const userRequestLicense = asyncHandler(async (req, res) => {
-  const { request_to, Content } = req.body;
+  const { request_to, time,token} = req.body;
   const sender_username = req.user.username;
   //const cid = req.result.cid
   //console.log(cid)
   //console.log(hospital_username)
 
-  if (!sender_username || !request_to || !Content) {
+  if (!sender_username || !request_to || !token || !time) {
     res.status(400);
     throw new Error("Please Enter all the Feilds");
   }
@@ -140,9 +140,10 @@ const userRequestLicense = asyncHandler(async (req, res) => {
     throw new Error("Patient not found");
   }
   const userReq = await licenseRequest.create({
-    Content,
+    time,
     request_to,
     sender_username,
+    token
   });
 
   if (userReq) {
