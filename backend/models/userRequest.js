@@ -24,7 +24,8 @@ const licenseRequestSchema = mongoose.Schema(
     isAccept : { type: "Boolean", default:false },
     isUserRead:{type:"Boolean",default:false},
     sender_username:{type:"String",required:true},
-    Content:{type:"String",required:true},
+    time:{type:"String",required:true},
+    token:{type:"String",required:true},
     isSenderRead:{type:"Boolean",default:false},
    
   },
