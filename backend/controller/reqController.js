@@ -13,13 +13,13 @@ const { User } = require("../models/user");
 //@route           POST /api/request/mint
 //@access          Public
 const userRequest = asyncHandler(async (req, res) => {
-  const { request_to, Content } = req.body;
+  const { request_to, Content,diagnosis_code,doc_name } = req.body;
   const sender_username = req.user.username;
   //const cid = req.result.cid
   //console.log(cid)
   //console.log(hospital_username)
 
-  if (!sender_username || !request_to || !Content) {
+  if (!sender_username || !request_to || !Content||! diagnosis_code|| !doc_name) {
     res.status(400);
     throw new Error("Please Enter all the Feilds");
   }
@@ -35,6 +35,8 @@ const userRequest = asyncHandler(async (req, res) => {
     Content,
     request_to,
     sender_username,
+    diagnosis_code,
+    doc_name,
   });
 
   if (userReq) {

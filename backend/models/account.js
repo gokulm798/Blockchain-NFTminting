@@ -6,7 +6,7 @@ const accountSchema = mongoose.Schema(
     
     owner_username: { type: "String", required: true, },
     address: { type: "String", required: true },
-    public_key: { type: "String", required: true },
+    
        
   },
   { timestamps: true }

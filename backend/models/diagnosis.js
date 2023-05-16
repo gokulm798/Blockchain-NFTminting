@@ -4,8 +4,8 @@ const mongoose = require("mongoose");
 const diagnosisSchema = mongoose.Schema(
   {
     
-    diagnosis_code: { type: "String", required: true, },
-    diagnosis_disease: { type: "String", required: true },
+    diagnosis_code: { type: "String", required: true, unique:true},
+    diagnosis_disease: { type: "String", required: true ,unique:true},
        
   },
   { timestamps: true }
