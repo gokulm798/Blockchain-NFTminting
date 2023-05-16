@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
-const Mint = () => {
+const Mint = ({ handleSubmit }) => {
   // const location = useLocation();
 
   const [selectedFile, setSelectedFile] = useState([]);
@@ -15,11 +15,11 @@ const Mint = () => {
 
   // console.log(tk);
 
-  const [fileBase64String, setFileBase64String] = useState("");
-  const nav = useNavigate();
-  const dataSubmit = async (e) => {
-    e.preventDefault();
-    console.log(fileBase64String);
+  /* #########  UPLOAD ########
+   const [fileBase64String, setFileBase64String] = useState("");
+
+
+  console.log(fileBase64String);
     const tokenId = uuidv4();
     console.log(Pid);
     console.log(tokenId);
@@ -43,11 +43,18 @@ const Mint = () => {
     if (response.ok) {
       const data = await response.json();
       console.log(data);
-      nav("/Hospital/Mint", { state: { tk } });
+      // nav("/Hospital/Mint", { state: { tk } });
       // console.log(cnt);
     } else {
       throw new Error("Request failed with status: " + response.status);
     }
+  ######### ######## ##########
+  <InputBox type={"file"} onChange={handleFileChange} />
+
+   */
+
+  const dataSubmit = async (e) => {
+    e.preventDefault();
   };
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files);
@@ -76,7 +83,7 @@ const Mint = () => {
     <div className="flex justify-center items-center h-[100vh] w-screen gap-2 ">
       <form
         className="bg-primary text-white w-[600px] p-7 border-green-500 border-2 rounded-md"
-        onSubmit={dataSubmit}
+        onSubmit={(e) => handleSubmit(e, Pid, Doc, DiaCode)}
       >
         <InputBox
           type={"text"}
@@ -102,7 +109,7 @@ const Mint = () => {
           value={DiaCode}
           onChange={(event) => setDiaCode(event.target.value)}
         ></InputBox>
-        <InputBox type={"file"} onChange={handleFileChange} />
+
         <button
           type="submit"
           className="bg-green-700/40 border-none w-2/3 mx-3 hover:brightness-150 duration-500"

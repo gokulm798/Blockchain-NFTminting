@@ -3,6 +3,7 @@ import { Navbar } from "../components/Navbar";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import RequestContainer from "../components/RequestContainer";
+import Mint from "./Mint";
 
 const Hospital = () => {
   // const location = useLocation();
@@ -39,19 +40,24 @@ const Hospital = () => {
   // };
   // `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NWZiNjQ2YzkzZGFlNGQ2YTQzY2ZlOCIsImlhdCI6MTY4Mzk5NDE4MywiZXhwIjoxNjg2NTg2MTgzfQ.SORh5FXSTAsmbgPwtlTfVs50h6Vu1AlxJQUsU7WOP4o`,
 
-  const reqApproval = async (e) => {
+  const reqApproval = async (e, Pid, Doc, DiaCode) => {
     e.preventDefault();
-    console.log(e.target.UserID.value);
-    request_to = e.target.UserID.value;
+    console.log(Pid);
+    // request_to = e.target.UserID.value;
     // Content = e.target.Content.value;
-    Content = "Mint your medical records as NFT";
+    Content = `Request to mint your medical records for ${DiaCode} under Dr.${Doc}`;
     const result = await fetch("http://localhost:8000/api/request/mint", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${tk}`,
       },
-      body: JSON.stringify({ request_to, Content }),
+      body: JSON.stringify({
+        request_to: Pid,
+        Content,
+        diagnosis_code: DiaCode,
+        doc_name: Doc,
+      }),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -112,24 +118,7 @@ const Hospital = () => {
       <div className="flex justify-center items-center">
         {currentTab === "Home" ? (
           <>
-            <form
-              className="mintForm bg-primary/100 w-56 h-36 p-5 rounded-xl border-2 border-green-400"
-              onSubmit={reqApproval}
-            >
-              <input
-                id="UserID"
-                className=" mb-3 border-b-[1px] border-solid w-full border-white bg-transparent focus:outline-none my-6"
-                placeholder="UserID"
-                type={"text"}
-              />
-              {/* <input id="Content" placeholder="Content" type={"text"}></input> */}
-              <button
-                className="border-none text-white hover:bg-green-400 duration-300"
-                type="submit"
-              >
-                {ReqBtn}
-              </button>
-            </form>
+            <Mint handleSubmit={reqApproval} />
             {/* </div> */}
             {/* {CreBtn && (
           <div>

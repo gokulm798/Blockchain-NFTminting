@@ -235,8 +235,8 @@ const Patient = (props) => {
         ) : (
           <RequestContainer
             requests={Request}
-            aColour="green-400"
-            rColour="red-500"
+            aColour="hover:text-green-400"
+            rColour="hover:text-red-500"
             aBtn="Accept"
             rBtn="Reject"
             acptF={acceptReq}
