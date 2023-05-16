@@ -12,9 +12,9 @@ const addAccount = asyncHandler(async (req, res) => {
    //console.log(keyword)
    const owner_username=req.user.username
    const address=req.body.address
-   const public_key=req.body.public_key
+   //const public_key=req.body.public_key
 
-   if (!owner_username || !address||!public_key) {
+   if (!owner_username || !address) {
     res.status(400);
     throw new Error("Please Enter all the Feilds");
   }
@@ -35,7 +35,7 @@ const addAccount = asyncHandler(async (req, res) => {
       {
         anotherAccount:true,
         address:accountExst.address,
-        public_key:accountExst.public_key
+        //public_key:accountExst.public_key
       }
     )
 
@@ -47,7 +47,7 @@ const addAccount = asyncHandler(async (req, res) => {
         
         owner_username,
         address,
-        public_key,
+        //public_key,
         
       });
       if(accountLinked)
