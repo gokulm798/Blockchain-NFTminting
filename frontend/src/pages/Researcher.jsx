@@ -11,7 +11,7 @@ const Researcher = () => {
   const [Feed, setFeed] = useState([]);
   const [OrgFeed, setOrgFeed] = useState([]);
   const [Request, setRequest] = useState([]);
-
+  const [cnt, setCnt] = useState(true);
   const [cid, setCid] = useState("");
   // const records = ["Demo Post 1", "Demo Post 2", "Demo Post 3"];
   // const requests = ["Demo Request 1", "Demo Request 2"];
@@ -46,41 +46,39 @@ const Researcher = () => {
     fetchFeed();
   }, []);
 
-  /*
+  useEffect(() => {
+    const fetchReq = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8000/api/request/license/sender/check",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tk}`,
+            },
+          }
+        );
 
-
-
-
-useEffect(() => {
-  const fetchReq = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:8000/api/request/mint/check",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${tk}`,
-          },
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          console.log(data._id);
+          setRequest(data);
+        } else {
+          throw new Error("Request failed with status: " + response.status);
         }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        console.log(data._id);
-        setRequest(data);
-      } else {
-        throw new Error("Request failed with status: " + response.status);
+      } catch (error) {
+        console.log("Error: " + error.message);
       }
-    } catch (error) {
-      console.log("Error: " + error.message);
-    }
-  };
-  fetchReq();
-  console.log(cnt);
-}, [cnt]);
-
+    };
+    fetchReq();
+    console.log(cnt);
+  }, [cnt]);
+  setInterval(() => {
+    setCnt(!cnt);
+  }, 20000);
+  /*
 const acceptReq = async (request) => {
   console.log(request._id);
 
@@ -159,8 +157,34 @@ const rejectReq = async (request) => {
     // useEffect(() => {}, [rsltArray]);
   };
 
-  const handleLicenseReq = (e, time) => {
+  const handleLicenseReq = async (e, time) => {
     e.preventDefault();
+
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/request/license",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${tk}`,
+          },
+          body: JSON.stringify({ request_to: "", time, token: "" }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        console.log(data.content);
+        setFileString(data.content);
+      } else {
+        throw new Error("Request failed with status: " + response.status);
+      }
+    } catch (error) {
+      console.log("Error: " + error.message);
+    }
+
     console.log(cid);
     console.log(time);
     setExpanded(false);

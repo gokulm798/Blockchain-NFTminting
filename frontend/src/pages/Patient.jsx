@@ -18,7 +18,7 @@ const Patient = (props) => {
   const [Pop, setPop] = useState(false);
   // const location = useLocation();
   const tk = sessionStorage.getItem("tk");
-  const [cnt, setCnt] = useState(0);
+  const [cnt, setCnt] = useState(true);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -128,7 +128,7 @@ const Patient = (props) => {
     if (response.ok) {
       const data = await response.json();
       console.log(data);
-      setCnt(cnt + 1);
+      setCnt(!cnt);
       // console.log(cnt);
     } else {
       throw new Error("Request failed with status: " + response.status);
@@ -149,7 +149,7 @@ const Patient = (props) => {
     );
     if (response.ok) {
       const data = await response.json();
-      setCnt(cnt + 1);
+      setCnt(!cnt);
       console.log(data);
     } else {
       throw new Error("Request failed with status: " + response.status);

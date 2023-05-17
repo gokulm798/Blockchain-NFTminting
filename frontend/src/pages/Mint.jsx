@@ -1,89 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
 
 const Mint = ({ handleSubmit }) => {
   // const location = useLocation();
 
-  const [selectedFile, setSelectedFile] = useState([]);
   const [Pid, setPid] = useState("");
   const [Doc, setDoc] = useState("");
   const [DiaCode, setDiaCode] = useState("");
-
+  const [Error, setError] = useState(false);
   const suggestions = ["Apple", "Apricot"];
   const tk = sessionStorage.getItem("tk");
-
-  // console.log(tk);
-
-  /* #########  UPLOAD ########
-   const [fileBase64String, setFileBase64String] = useState("");
-
-
-  console.log(fileBase64String);
-    const tokenId = uuidv4();
-    console.log(Pid);
-    console.log(tokenId);
-    console.log(DiaCode);
-    console.log(Doc);
-    console.log(tk);
-    const response = await fetch("http://localhost:8000/api/nft/upload", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${tk}`,
-      },
-      body: JSON.stringify({
-        token_id: tokenId,
-        patient_username: Pid,
-        hash: fileBase64String,
-        diagnosis_code: DiaCode,
-        doc_name: Doc,
-      }),
-    });
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
-      // nav("/Hospital/Mint", { state: { tk } });
-      // console.log(cnt);
-    } else {
-      throw new Error("Request failed with status: " + response.status);
-    }
-  ######### ######## ##########
-  <InputBox type={"file"} onChange={handleFileChange} />
-
-   */
-
-  const dataSubmit = async (e) => {
-    e.preventDefault();
-  };
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files);
-    console.log(e.target.files[0]);
-  };
-  const encodeFileBase64 = (file) => {
-    var reader = new FileReader();
-    if (file) {
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        var Base64 = reader.result;
-        console.log(Base64.substring(Base64.indexOf(",") + 1));
-        // console.log(Base64);
-        setFileBase64String(Base64.substring(Base64.indexOf(",") + 1));
-      };
-      reader.onerror = (error) => {
-        console.log("error: ", error);
-      };
-    }
-  };
-  useEffect(() => {
-    encodeFileBase64(selectedFile[0]);
-  }, [selectedFile]);
 
   return (
     <div className="flex justify-center items-center h-[100vh] w-screen gap-2 ">
       <form
         className="bg-primary text-white w-[600px] p-7 border-green-500 border-2 rounded-md"
-        onSubmit={(e) => handleSubmit(e, Pid, Doc, DiaCode)}
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (Pid !== "" && Doc !== "" && DiaCode !== "") {
+            handleSubmit(e, Pid, Doc, DiaCode);
+          } else setError(true);
+        }}
       >
         <InputBox
           type={"text"}
@@ -109,7 +46,11 @@ const Mint = ({ handleSubmit }) => {
           value={DiaCode}
           onChange={(event) => setDiaCode(event.target.value)}
         ></InputBox>
-
+        <div className="h-8">
+          {Error && (
+            <p className="text-sm text-red-600">Please fill in all details</p>
+          )}
+        </div>
         <button
           type="submit"
           className="bg-green-700/40 border-none w-2/3 mx-3 hover:brightness-150 duration-500"
@@ -117,8 +58,13 @@ const Mint = ({ handleSubmit }) => {
           Submit
         </button>
         <button
-          type=""
+          type="reset"
           className=" bg-red-700/40 text-white w-1/4 border-none hover:brightness-150 duration-500"
+          onClick={() => {
+            setPid("");
+            setDoc("");
+            setDiaCode("");
+          }}
         >
           Clear
         </button>

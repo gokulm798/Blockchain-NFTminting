@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { provider, signer, contract } from "../ConnWallet";
-const ConnButton = () => {
+const ConnButton = ({ handleConnect }) => {
   const [ConBtn, setConBtn] = useState("Connect Wallet");
+  const [Connection, setConnection] = useState(false);
   const tk = sessionStorage.getItem("tk");
 
   console.log(tk);
@@ -28,6 +29,7 @@ const ConnButton = () => {
       });
       if (response.ok) {
         const data = await response.json();
+        setConnection(true);
         if (data.anotherAccount) {
         }
       } else {
@@ -35,6 +37,7 @@ const ConnButton = () => {
       }
     }
   };
+  handleConnect(Connection, accounts);
   return (
     <div>
       <button

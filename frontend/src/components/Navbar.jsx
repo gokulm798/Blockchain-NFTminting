@@ -4,7 +4,7 @@ import ConnButton from "./ConnButton";
 
 const Navbar = (props) => {
   const [MenuBtn, setMenuBtn] = useState(false);
-  const { items, handleItemClick } = props;
+  const { items, handleItemClick, handleConnect } = props;
   return (
     <div className="max-w-[1640] mx-auto flex justify-between items-center p-4 bg-black/50 text-white">
       {/*Left */}
@@ -43,7 +43,7 @@ const Navbar = (props) => {
         </nav>
       </div>
       <div className="text-white">
-        <ConnButton />
+        <ConnButton handleConnect={handleConnect} />
       </div>
     </div>
   );
