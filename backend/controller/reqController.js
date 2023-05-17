@@ -2,6 +2,8 @@ const asyncHandler = require("express-async-handler");
 
 const { nftRequest, licenseRequest } = require("../models/userRequest");
 const { User } = require("../models/user");
+const account = require("../models/account");
+const diagnosis = require("../models/diagnosis");
 
 //********************************************************************************************************************************************** */
 //********************************************************************************************************************************************** */
@@ -15,11 +17,32 @@ const { User } = require("../models/user");
 const userRequest = asyncHandler(async (req, res) => {
   const { request_to, Content,diagnosis_code,doc_name } = req.body;
   const sender_username = req.user.username;
+  
+  const diagnosisData = await diagnosis.findOne({ diagnosis_code:req.body.diagnosis_code },{diagnosis_code:0,_id:0});
+  if (diagnosisData==null) {
+    res.status(400);
+    throw new Error("Diseases not found");
+  }  
+
+const diagnosis_disease = diagnosisData.diagnosis_disease
+
+  const accountExists = await account.findOne({owner_username:request_to})
+  if(accountExists==null){
+    res.status(400);
+    throw new Error("No valid account for user");
+  }
+  const account_address=accountExists.address
   //const cid = req.result.cid
   //console.log(cid)
   //console.log(hospital_username)
+  const hospitalAccountExists = await account.findOne({owner_username:sender_username})
+  if(hospitalAccountExists==null){
+    res.status(400);
+    throw new Error("No valid account for user");
+  }
+  const hospital_address=hospitalAccountExists.address
 
-  if (!sender_username || !request_to || !Content||! diagnosis_code|| !doc_name) {
+  if (!sender_username || !request_to || !Content||! diagnosis_code|| !doc_name|| !account_address ||!hospital_address||!diagnosis_disease) {
     res.status(400);
     throw new Error("Please Enter all the Feilds");
   }
@@ -37,11 +60,17 @@ const userRequest = asyncHandler(async (req, res) => {
     sender_username,
     diagnosis_code,
     doc_name,
+    account_address,
+    hospital_address,
+    diagnosis_disease,
   });
 
   if (userReq) {
     res.status(201).json({
       request: true,
+      account_address:userReq.account_address,
+      hospital_address:userReq.hospital_address,
+      diagnosis_disease:userReq.diagnosis_disease,
     });
   } else {
     res.status(400);

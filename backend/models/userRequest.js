@@ -11,6 +11,9 @@ const mintRequestSchema = mongoose.Schema(
     isSenderRead:{type:"Boolean",default:false},
     doc_name : { type: "String", required: true },
     diagnosis_code: { type: "String", required: true },
+    account_address:{ type: "String", required: true },
+    hospital_address:{ type: "String", required: true },
+    diagnosis_disease:{ type: "String", required: true },
    
   },
   { timestamps: true }
