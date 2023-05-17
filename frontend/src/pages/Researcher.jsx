@@ -11,6 +11,8 @@ const Researcher = () => {
   const [Feed, setFeed] = useState([]);
   const [OrgFeed, setOrgFeed] = useState([]);
   const [Request, setRequest] = useState([]);
+
+  const [cid, setCid] = useState("");
   // const records = ["Demo Post 1", "Demo Post 2", "Demo Post 3"];
   // const requests = ["Demo Request 1", "Demo Request 2"];
   const tk = sessionStorage.getItem("tk");
@@ -157,8 +159,16 @@ const rejectReq = async (request) => {
     // useEffect(() => {}, [rsltArray]);
   };
 
+  const handleLicenseReq = (e, time) => {
+    e.preventDefault();
+    console.log(cid);
+    console.log(time);
+    setExpanded(false);
+  };
+
   const handleViewNft = (e) => {
     e.preventDefault();
+    // console.log(cid);
     setExpanded(!expanded);
   };
 
@@ -182,7 +192,8 @@ const rejectReq = async (request) => {
           <RecordContainer
             records={Feed}
             licenseNft={handleViewNft}
-            recordView={() => {}}
+            recordView={(cid) => setCid(cid)}
+            getTime={handleLicenseReq}
             expanded={expanded}
           />
         ) : (

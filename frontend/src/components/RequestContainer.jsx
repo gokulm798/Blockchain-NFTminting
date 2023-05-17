@@ -39,7 +39,7 @@ const Button = (props) => {
       className={`flex justify-end gap-4 transition-all duration-700 text-white text-sm`}
     >
       <button
-        className={`bg-primary/80 border-none brightness-125 hover:brightness-150 hover:bg-primary/100 duration-300 py-[2px] px-2 rounded-[5px] hover:text-${clr}`}
+        className={`bg-primary/80 border-none brightness-125 hover:brightness-150 hover:bg-primary/100 duration-300 py-[2px] px-2 rounded-[5px] mt-2 ml-2 ${clr}`}
         onClick={func}
       >
         {Btn}

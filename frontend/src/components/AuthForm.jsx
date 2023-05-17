@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FiCopy } from "react-icons/fi";
 const AuthForm = ({ children, onSubmit }) => {
   return (
     <form className="py-7 px-6 " onSubmit={onSubmit}>
@@ -145,7 +146,7 @@ const Login = (props, { onSubmit }) => {
 const Signup = (props, { onSubmit }) => {
   const [Username, setUsername] = useState("");
   const [Prefix, setPrefix] = useState();
-  // const [Option, setOption] = useState();
+  const [copied, setCopied] = useState("text-white");
   const [selectedOption, setSelectedOption] = useState("");
   const [userIDs, setUserIDs] = useState({
     patient: "",
@@ -154,6 +155,7 @@ const Signup = (props, { onSubmit }) => {
   });
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [MatchPassword, setMatchPassword] = useState(false);
   const navigate = useNavigate();
   // ...
 
@@ -196,42 +198,55 @@ const Signup = (props, { onSubmit }) => {
     const name = Username;
 
     console.log(username, password);
-    try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-        },
-      };
+    if (password === confirmPassword) {
+      setMatchPassword(false);
+      try {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+          },
+        };
 
-      const { data } = await axios.post(
-        "http://localhost:8000/api/user/",
-        { username, name, password },
-        config
-      );
-      if (data) {
-        if (data.status !== 401) {
-          const tk = data.token;
-          const nm = data.name;
-          console.log(nm);
-          const un = data.username;
-          // Set data in session storage
-          sessionStorage.setItem("tk", tk);
+        const { data } = await axios.post(
+          "http://localhost:8000/api/user/",
+          { username, name, password },
+          config
+        );
+        if (data) {
+          if (data.status !== 401) {
+            const tk = data.token;
+            const nm = data.name;
+            console.log(nm);
+            const un = data.username;
+            // Set data in session storage
+            sessionStorage.setItem("tk", tk);
 
-          navigate(`/${selectedOption}`, {
-            state: {
-              nm,
-              un,
-              tk,
-            },
-          });
+            navigate(`/${selectedOption}`, {
+              state: {
+                nm,
+                un,
+                tk,
+              },
+            });
+          }
+
+          console.log(JSON.stringify(data));
+
+          // onSubmit({ email, password, confirmPassword });
         }
-
-        console.log(JSON.stringify(data));
-
-        // onSubmit({ email, password, confirmPassword });
+      } catch (error) {
+        console.log(error);
       }
+    }
+    setMatchPassword(true);
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(userIDs[selectedOption]);
+      setCopied("text-green-400");
     } catch (error) {
-      console.log(error);
+      console.log("Failed to copy:", error);
     }
   };
 
@@ -257,7 +272,14 @@ const Signup = (props, { onSubmit }) => {
           <option value="Researcher">Researcher</option>
         </select>
         {selectedOption && (
-          <div className="mt-2">User ID : {userIDs[selectedOption]}</div>
+          <div className=" flex gap-1 mt-2 items-center">
+            User ID : {userIDs[selectedOption]}{" "}
+            <div
+              className={` inline-flex  ${copied}  cursor-pointer focus:animate-pop duration-100`}
+            >
+              <FiCopy onClick={copyToClipboard} />
+            </div>{" "}
+          </div>
         )}
       </div>
 
@@ -273,6 +295,11 @@ const Signup = (props, { onSubmit }) => {
         value={confirmPassword}
         onChange={(event) => setConfirmPassword(event.target.value)}
       />
+      <div className="h-7">
+        {MatchPassword && (
+          <p className="text-sm text-red-600">Passwords don't match</p>
+        )}
+      </div>
       <SubmitButton label="Signup" />
     </AuthForm>
   );

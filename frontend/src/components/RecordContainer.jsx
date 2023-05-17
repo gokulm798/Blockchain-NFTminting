@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { FiTag } from "react-icons/fi";
 const RecordContainer = (props) => {
-  const { records, recordView, licenseNft, expanded } = props;
-  const [licBtnVal, setLicBtnVal] = useState(new Date());
+  const { records, recordView, licenseNft, getTime, expanded } = props;
+  const [time, setTime] = useState("");
+
+  // const [licBtnVal, setLicBtnVal] = useState(new Date());
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [expandedRecord, setExpandedRecord] = useState(-1);
   // const [cid, setCid] = useState("");
@@ -13,15 +15,15 @@ const RecordContainer = (props) => {
   if (records.length === 0) {
     return <div className="text-2xl text-red-700">No records found</div>;
   }
-  const handleLicenseButton = (e) => {
-    setLicBtnVal(e.target.value);
-    const now = new Date();
-    const future = new Date(licBtnVal);
-    const difference = future.getTime() - now.getTime();
-    const seconds = Math.floor(difference / 1000);
-    console.log(seconds);
-    setRemainingSeconds(seconds);
-  };
+  // const handleLicenseButton = (e) => {
+  //   setLicBtnVal(e.target.value);
+  //   const now = new Date();
+  //   const future = new Date(licBtnVal);
+  //   const difference = future.getTime() - now.getTime();
+  //   const seconds = Math.floor(difference / 1000);
+  //   console.log(seconds);
+  //   setRemainingSeconds(seconds);
+  // };
 
   const calculateAge = (birthdate) => {
     const birthdateObj = new Date(birthdate);
@@ -32,12 +34,26 @@ const RecordContainer = (props) => {
     return calculatedAge;
   };
 
+  const handleTime = (e) => {
+    e.preventDefault();
+    // const time = ;
+    //
+    // const [hours, minutes] = time.split(":").map(Number);
+    const hours = parseInt(time);
+    const seconds = hours * 3600;
+
+    console.log(seconds);
+    getTime(e, seconds);
+    // setTime("00:00");
+    // Use the totalSeconds value as needed
+  };
+
   return (
-    <div className="flex flex-wrap mt-1 overflow-y-auto gap-2 h-[calc(100vh-110px)] scrollbar-hide sm:w-[60%]  md:w-[50%] lg:w-[40%]">
+    <div className="flex flex-wrap flex-col mt-1 overflow-y-auto h-[calc(100vh-110px)] scrollbar-hide sm:w-[60%]  gap-2 md:w-[50%] lg:w-[40%] items-start">
       {records.map((record, index) => (
         <div
           key={index}
-          className=" bg-green-200/60 m-h-[200px]  text-xl text-white font-mono w-full p-4 rounded-md border-2 border-green-400"
+          className=" bg-green-200/60 max-h-[200px]  text-xl text-white font-mono w-full p-4 rounded-md border-2 border-green-400"
           onClick={() => {
             // setCid(record.cid);
             console.log(record.cid);
@@ -61,23 +77,24 @@ const RecordContainer = (props) => {
             </div>
           </div>
           {expanded && expandedRecord === index && (
-            <div className=" flex justify-between bg-transparent px-7 rounded-md  border-green-400">
+            <form className=" flex justify-between items-center bg-transparent px-4 rounded-md  border-green-400">
               <input
-                type="date"
-                placeholder="Enter value"
-                className=" bg-transparent text-white outline-none
+                type="number"
+                placeholder="Enter time in hours"
+                className=" bg-primary/20 px-3 h-7 rounded-md text-white outline-none
                 "
-                // value={inputValue}
-                // onChange={handleInput}
+                // onChange={handleTime}
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
               />
               <button
-                value={licBtnVal}
                 className=" border-none"
-                onClick={handleLicenseButton}
+                type="submit"
+                onClick={handleTime}
               >
                 Submit
               </button>
-            </div>
+            </form>
           )}
         </div>
       ))}
