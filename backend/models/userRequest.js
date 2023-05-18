@@ -31,7 +31,12 @@ const licenseRequestSchema = mongoose.Schema(
     sender_username:{type:"String",required:true},
     time:{type:"String",required:true},
     token:{type:"String",required:true},
+    account_address:{type:"String",required:true},
+    researcher_address:{type:"String",required:true},
     isSenderRead:{type:"Boolean",default:false},
+    sender_name:{type:"String",required:true},
+    content:{ type: "String", required: true },
+
    
   },
   { timestamps: true }

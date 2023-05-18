@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 
 
 const data = require("../models/ipfs");
+const diagnosis = require("../models/diagnosis");
 //@description     Get the feed to users
 //@route           GET /api/feed/
 //@access          Public
@@ -15,6 +16,23 @@ const feed = asyncHandler(async (req, res) => {
     { $sample: { size: 10 } }
 ])
 res.send(feeds)
+
+
+});
+
+
+//@description     Get the disease detail to users
+//@route           GET /api/feed/diagnosis
+//@access          Public
+const displayDisease = asyncHandler(async (req, res) => {
+   
+  //console.log(keyword)
+   
+  // console.log(req.user)
+
+ const diseases = await diagnosis.find()
+
+res.send(diseases)
 
 
 });
@@ -39,4 +57,4 @@ res.send(feeds);
 });
 
 
-module.exports = { feed ,feedSearch};
+module.exports = { feed ,feedSearch,displayDisease};
