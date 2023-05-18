@@ -19,6 +19,7 @@ const Mint = ({ handleSubmit }) => {
           e.preventDefault();
           if (Pid !== "" && Doc !== "" && DiaCode !== "") {
             handleSubmit(e, Pid, Doc, DiaCode);
+            console.log(Pid);
           } else setError(true);
         }}
       >

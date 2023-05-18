@@ -10,8 +10,11 @@ import PopUp from "../components/PopUp";
 
 const Patient = (props) => {
   const [currentTab, setCurrentTab] = useState("history");
+  const [ReqTab, setReqTab] = useState(false);
+  const [showReq, setShowReq] = useState("License");
   const [Veiw, setVeiw] = useState(false);
-  const [Request, setRequest] = useState([]);
+  const [MintRequest, setMintRequest] = useState([]);
+  const [LicRequest, setLicRequest] = useState([]);
   const [Record, setRecord] = useState([]);
   const [Details, setDetails] = useState();
   const [fileString, setFileString] = useState("");
@@ -19,6 +22,9 @@ const Patient = (props) => {
   // const location = useLocation();
   const tk = sessionStorage.getItem("tk");
   const [cnt, setCnt] = useState(true);
+
+  const [Meta, setMeta] = useState(false);
+  const [Account, setAccount] = useState("");
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -79,10 +85,37 @@ const Patient = (props) => {
       }
     };
     fetchHistory();
-  }, []);
+  }, [currentTab]);
 
   useEffect(() => {
-    const fetchReq = async () => {
+    const fetchLicReq = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8000/api/request/license/check",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tk}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const lic = await response.json();
+          console.log(lic);
+          console.log(lic._id);
+          setLicRequest(lic);
+        } else {
+          throw new Error("Request failed with status: " + response.status);
+        }
+      } catch (error) {
+        console.log("Error: " + error.message);
+      }
+    };
+    fetchLicReq();
+
+    const fetchMintReq = async () => {
       try {
         const response = await fetch(
           "http://localhost:8000/api/request/mint/check",
@@ -99,7 +132,7 @@ const Patient = (props) => {
           const data = await response.json();
           console.log(data);
           console.log(data._id);
-          setRequest(data);
+          setMintRequest(data);
         } else {
           throw new Error("Request failed with status: " + response.status);
         }
@@ -107,9 +140,8 @@ const Patient = (props) => {
         console.log("Error: " + error.message);
       }
     };
-    fetchReq();
-    console.log(cnt);
-  }, [cnt]);
+    fetchMintReq();
+  }, [cnt, showReq]);
 
   const acceptReq = async (request) => {
     console.log(request._id);
@@ -216,32 +248,75 @@ const Patient = (props) => {
   return (
     <div>
       <div>
-        <Navbar items={[]} />
+        <Navbar
+          items={[]}
+          handleConnect={(conn, acc) => {
+            setMeta(conn);
+            setAccount(acc);
+          }}
+        />
       </div>
       <div className=" w-screen py-1 bg-white/10 text-white text-sm flex justify-center items-center gap-2 ">
-        <a href="#" onClick={() => setCurrentTab("history")}>
-          History
-        </a>
-        <a href="#" onClick={() => setCurrentTab("requests")}>
-          Requests
-        </a>
+        <div>
+          <a href="#" onClick={() => setCurrentTab("history")}>
+            History
+          </a>
+        </div>
+        <div>
+          <a
+            href="#"
+            onClick={() => {
+              setCurrentTab("requests");
+              setReqTab(true);
+            }}
+          >
+            Requests
+          </a>
+        </div>
+
         <div className="relative ml-8 ">
           <SearchBar />
         </div>
       </div>
+      {ReqTab && (
+        <div className=" bg-primary/5 flex w-screen justify-center items-center gap-20 text-sm text-white ">
+          <a href="#" onClick={() => setShowReq("License")}>
+            License
+          </a>
+          <a href="#" onClick={() => setShowReq("Mint")}>
+            Mint
+          </a>
+        </div>
+      )}
       <div className="flex justify-center items-center w-screen">
         {currentTab === "history" ? (
           <RecordContainer records={Record} recordView={handleRecordView} />
         ) : (
-          <RequestContainer
-            requests={Request}
-            aColour="hover:text-green-400"
-            rColour="hover:text-red-500"
-            aBtn="Accept"
-            rBtn="Reject"
-            acptF={acceptReq}
-            rejtF={rejectReq}
-          />
+          <>
+            {showReq === "License" ? (
+              <RequestContainer
+                requests={LicRequest}
+                aColour="hover:text-green-400"
+                rColour="hover:text-red-500"
+                aBtn="Accept"
+                rBtn="Reject"
+                acptF={acceptReq}
+                rejtF={rejectReq}
+                filterAcceptedOnly={false}
+              />
+            ) : (
+              <RequestContainer
+                requests={MintRequest}
+                aColour="hover:text-green-400"
+                rColour="hover:text-red-500"
+                aBtn="Accept"
+                rBtn="Reject"
+                acptF={acceptReq}
+                rejtF={rejectReq}
+                filterAcceptedOnly={false}
+              />
+            )}
+          </>
         )}
       </div>
       {Veiw && (

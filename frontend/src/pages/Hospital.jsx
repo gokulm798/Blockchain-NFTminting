@@ -4,6 +4,8 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import RequestContainer from "../components/RequestContainer";
 import { v4 as uuidv4 } from "uuid";
+import { ethers } from "ethers";
+import { provider, signer, contract } from "../ConnWallet";
 import Mint from "./Mint";
 
 const Hospital = () => {
@@ -14,6 +16,7 @@ const Hospital = () => {
   const [tokenId, SetTokenId] = useState("");
   const [Pid, setPid] = useState("");
   const [Doc, setDoc] = useState("");
+  // const [patAdd, setPatAdd] = useState("");
   const [DiaCode, setDiaCode] = useState("");
   const [fileBase64String, setFileBase64String] = useState("");
 
@@ -82,37 +85,42 @@ const Hospital = () => {
   // }, 600000);
 
   const reqApproval = async (e, Pid, Doc, DiaCode) => {
+    console.log(Meta);
     if (Meta) {
       e.preventDefault();
-      console.log(Pid);
-      let token_id = uuidv4();
-      SetTokenId(tokenId);
-
-      contract.setOwnersAndRequestApproval(String(Account), patAdd, tokenId);
 
       // request_to = e.target.UserID.value;
       // Content = e.target.Content.value;
       Content = `Request to mint your medical records for ${DiaCode} under Dr.${Doc}`;
-      const result = await fetch("http://localhost:8000/api/request/mint", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${tk}`,
-        },
-        body: JSON.stringify({
-          request_to: Pid,
-          Content,
-          diagnosis_code: DiaCode,
-          doc_name: Doc,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data.request);
-        })
-        .catch((err) => {
-          console.log("error:" + err);
+      try {
+        const response = await fetch("http://localhost:8000/api/request/mint", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${tk}`,
+          },
+          body: JSON.stringify({
+            request_to: Pid,
+            Content,
+            diagnosis_code: DiaCode,
+            doc_name: Doc,
+          }),
         });
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          console.log(data._id);
+          let patAdd = data.account_address;
+          let hosAdd = data.hospital_address;
+          console.log(hosAdd);
+          console.log(patAdd);
+          contract.setOwnersAndRequestApproval(hosAdd, patAdd);
+        } else {
+          throw new Error("Request failed with status: " + response.status);
+        }
+      } catch (error) {
+        console.log("Error: " + error.message);
+      }
     }
     // setResult(result.output);
   };
@@ -128,7 +136,6 @@ const Hospital = () => {
       reader.onload = () => {
         var Base64 = reader.result;
         console.log(Base64.substring(Base64.indexOf(",") + 1));
-        // console.log(Base64);
         setFileBase64String(Base64.substring(Base64.indexOf(",") + 1));
       };
       reader.onerror = (error) => {
@@ -141,6 +148,18 @@ const Hospital = () => {
   }, [selectedFile]);
   const handleMintUpload = async (e) => {
     e.preventDefault();
+    console.log(fileBase64String);
+    const utf8Encoder = new TextEncoder();
+    const tokenId = ethers.utils.keccak256(
+      utf8Encoder.encode(fileBase64String)
+    );
+    // console.log(hash);
+
+    console.log(DiaCode);
+    console.log(Doc);
+    console.log(Pid);
+    console.log(DiaCode);
+    console.log(fileBase64String);
 
     const response = await fetch("http://localhost:8000/api/nft/upload", {
       method: "POST",
@@ -149,7 +168,7 @@ const Hospital = () => {
         Authorization: `Bearer ${tk}`,
       },
       body: JSON.stringify({
-        token_id: tokenId,
+        token_id: String(tokenId),
         patient_username: Pid,
         hash: fileBase64String,
         diagnosis_code: DiaCode,
@@ -158,6 +177,9 @@ const Hospital = () => {
     });
     if (response.ok) {
       const data = await response.json();
+      contract.mintNFT(tokenId, data.cid);
+      const r = contract.getReceivedValue();
+      console.log(r);
       setPop(!pop);
       console.log(data);
     } else {
@@ -166,38 +188,15 @@ const Hospital = () => {
   };
 
   const handleUpload = async (request) => {
+    console.log(request);
     setPid(request.request_to);
     setDiaCode(request.diagnosis_code);
     setDoc(request.doc_name);
+
     setPop(!pop);
   };
 
-  //   e.preventDefault();
-  //   let tk = parseInt(e.target.tokenID.value);
-  //   console.log(Acc);
-  //   // console.log(String(Acc));
-  //   contract.setOwnersAndRequestApproval(
-  //     String(Acc),
-  //     e.target.patAdd.value,
-  //     tk
-  //   );
-  //   setCreBtn("Create");
-  // };
-
-  // const creNft = async (e) => {
-  //   e.preventDefault();
-
-  // let t = parseInt(e.target.tokenId.value);
-  // // let nm=document.getElementById("nftName").value;
-  // let nm = e.target.nftName.value;
-  // let desc = e.target.nftDesc.value;
-  // let doc = e.target.nftDoc.value;
-  // console.log(nm);
-  // if (nm) {
-  //   // console.log(desc)
   //   contract.createNFT(t, nm, desc, doc);
-  // }
-  // };
 
   const handleItemClick = (text) => {
     console.log(text);
@@ -232,7 +231,11 @@ const Hospital = () => {
             </div>
           </>
         ) : (
-          <RequestContainer requests={Request} RecordDetails={handleUpload} />
+          <RequestContainer
+            requests={Request}
+            RecordDetails={handleUpload}
+            filterAcceptedOnly={true}
+          />
         )}
       </div>
       <div className="flex justify-center items-center">{/* <div> */}</div>
@@ -249,7 +252,7 @@ const Hospital = () => {
               <input
                 type="file"
                 className="w-35 mb-3 border-b-[1px] border-solid  border-white bg-transparent focus:outline-none my-6"
-                onClick={handleFileChange}
+                onChange={handleFileChange}
               />
               <button
                 type="submit"

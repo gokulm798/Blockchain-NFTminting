@@ -8,7 +8,7 @@ const RecordContainer = (props) => {
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [expandedRecord, setExpandedRecord] = useState(-1);
   // const [cid, setCid] = useState("");
-  let cid = "";
+
   const handleLicense = (e) => {
     e.preventDefault();
   };
@@ -49,7 +49,7 @@ const RecordContainer = (props) => {
   };
 
   return (
-    <div className="flex flex-wrap flex-col mt-1 overflow-y-auto h-[calc(100vh-110px)] scrollbar-hide sm:w-[60%]  gap-2 md:w-[50%] lg:w-[40%] items-start">
+    <div className="flex flex-col mt-1 overflow-y-auto h-[calc(100vh-110px)] scrollbar-hide sm:w-[60%] gap-2  w-[390px] md:w-[450px]  lg:w-[37%] items-start">
       {records.map((record, index) => (
         <div
           key={index}
@@ -58,8 +58,9 @@ const RecordContainer = (props) => {
             // setCid(record.cid);
             console.log(record.cid);
 
-            cid = record.cid;
-            recordView(cid);
+            let cid = record.cid;
+            let pid = record.patient_username;
+            recordView(cid, pid);
             // console.log(cid);
             setExpandedRecord(index);
           }}

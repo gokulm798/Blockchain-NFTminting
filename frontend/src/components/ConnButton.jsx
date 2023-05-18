@@ -3,6 +3,7 @@ import { provider, signer, contract } from "../ConnWallet";
 const ConnButton = ({ handleConnect }) => {
   const [ConBtn, setConBtn] = useState("Connect Wallet");
   const [Connection, setConnection] = useState(false);
+  const [accounts, setAccounts] = useState("");
   const tk = sessionStorage.getItem("tk");
 
   console.log(tk);
@@ -18,7 +19,10 @@ const ConnButton = ({ handleConnect }) => {
       setConBtn(
         String(accounts).substring(0, 4) + "...." + String(accounts).substr(-4)
       );
+
       console.log(accounts);
+      setAccounts(accounts);
+      setConnection(true);
       const response = await fetch("http://localhost:8000/api/accounts/", {
         method: "POST",
         headers: {

@@ -12,7 +12,13 @@ const Researcher = () => {
   const [OrgFeed, setOrgFeed] = useState([]);
   const [Request, setRequest] = useState([]);
   const [cnt, setCnt] = useState(true);
+
   const [cid, setCid] = useState("");
+  const [pid, setPid] = useState("");
+
+  const [Meta, setMeta] = useState(false);
+  const [Account, setAccount] = useState("");
+
   // const records = ["Demo Post 1", "Demo Post 2", "Demo Post 3"];
   // const requests = ["Demo Request 1", "Demo Request 2"];
   const tk = sessionStorage.getItem("tk");
@@ -169,7 +175,7 @@ const rejectReq = async (request) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${tk}`,
           },
-          body: JSON.stringify({ request_to: "", time, token: "" }),
+          body: JSON.stringify({ request_to: pid, time, token: "69" }),
         }
       );
 
@@ -199,7 +205,13 @@ const rejectReq = async (request) => {
   return (
     <div>
       {/* <PopUp /> */}
-      <Navbar items={[]} />
+      <Navbar
+        items={[]}
+        handleConnect={(conn, acc) => {
+          setMeta(conn);
+          setAccount(acc);
+        }}
+      />
       <div className=" w-screen py-1 bg-white/10 text-white text-sm flex justify-center items-center gap-2 ">
         <a href="#" onClick={() => setCurrentTab("history")}>
           Feeds
@@ -216,12 +228,15 @@ const rejectReq = async (request) => {
           <RecordContainer
             records={Feed}
             licenseNft={handleViewNft}
-            recordView={(cid) => setCid(cid)}
+            recordView={(cid, pid) => {
+              setCid(cid);
+              setPid(pid);
+            }}
             getTime={handleLicenseReq}
             expanded={expanded}
           />
         ) : (
-          <RequestContainer requests={Request} />
+          <RequestContainer requests={Request} filterAcceptedOnly={false} />
         )}
       </div>
     </div>
