@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 
 const generateToken = require("../config/generateToken");
 const {User,detail} = require("../models/user");
-const data = require("../models/ipfs");
+const {data,dupdata} = require("../models/ipfs");
 
 //@description     Get or Search all users
 //@route           POST /api/user/search
@@ -87,7 +87,7 @@ const history = asyncHandler(async (req, res) => {
  
    
   //console.log(req.user)
-  const historyData = await data.find({ patient_username :req.user.username })
+  const historyData = await dupdata.find({ patient_username :req.user.username })
 res.send(historyData)
 
 

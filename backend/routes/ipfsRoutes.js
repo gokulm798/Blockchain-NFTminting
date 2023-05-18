@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require('body-parser');
-const { upload ,download} = require("../controller/ipfsController")
+const { upload ,download,orgUpload} = require("../controller/ipfsController")
 const { protect } = require("../middleware/authMiddleware")
 const { nftUpload ,nftDownload} = require("../middleware/ipfsMiddleware")
 
@@ -17,5 +17,6 @@ router1.route("/upload").post(
     upload
     );
 router1.route("/download").post(nftDownload,protect,download);
+router1.route("/upload/mint").post(protect,orgUpload);
 
 module.exports = router1;

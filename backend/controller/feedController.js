@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 
 
-const data = require("../models/ipfs");
+const {dupdata} = require("../models/ipfs");
 const diagnosis = require("../models/diagnosis");
 //@description     Get the feed to users
 //@route           GET /api/feed/
@@ -12,7 +12,7 @@ const feed = asyncHandler(async (req, res) => {
     
    // console.log(req.user)
 
-  const feeds = await data.aggregate([
+  const feeds = await dupdata.aggregate([
     { $sample: { size: 10 } }
 ])
 res.send(feeds)
@@ -47,7 +47,7 @@ const feedSearch = asyncHandler(async (req, res) => {
   //console.log(keyword)
    
   // console.log(req.user)
-  const feeds = await data.find( 
+  const feeds = await dupdata.find( 
     { diagnosis_disease: { $regex: keyword, $options: "i" } },{})
     
   
