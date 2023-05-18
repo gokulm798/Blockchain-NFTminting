@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 
 const generateToken = require("../config/generateToken");
-const data = require("../models/ipfs");
+const {data,dupdata} = require("../models/ipfs");
 const {User,detail} = require("../models/user");
 const diagnosis = require("../models/diagnosis");
 const account = require("../models/account");
@@ -106,4 +106,67 @@ const download = asyncHandler(async (req, res) => {
   
 });
 
-module.exports = { upload ,download};
+//@description     To set the feed and  history
+//@route           GET /api/nft/upload/mint
+//@access          Public
+const orgUpload = asyncHandler(async (req, res) => {
+  const  {cid,mint} = req.body;
+  //console.log(cid)
+
+  const cidExists = await data.findOne({ cid:cid});
+   
+  if (cidExists==null) {
+    res.status(400);
+    throw new Error("CID  match not found");
+  } 
+  //console.log(cidExists)
+
+  const patient_username=cidExists.patient_username
+  const hospital_username=cidExists.hospital_username
+  const diagnosis_disease=cidExists.diagnosis_disease
+  const doc_name=cidExists.doc_name
+  const account_address=cidExists.account_address
+  const token_id=cidExists.token_id
+  const gender=cidExists.gender
+  const bloodGroup=cidExists.bloodGroup
+  const dateOfBirth =cidExists.dateOfBirth
+  
+
+  const nft = await dupdata.create({
+    cid ,
+    patient_username,
+    hospital_username,
+    diagnosis_disease,
+    doc_name,
+    account_address,
+    token_id,
+    gender,
+    bloodGroup,
+    dateOfBirth,
+    mint
+     
+  });
+
+  if (nft) {
+    res.status(201).json({
+        duplicateCreated:true,
+        cid:cid,
+      
+    });
+  } else {
+    res.status(400);
+    throw new Error("Error in uploading");
+  }
+
+  
+
+  //console.log(req.result) 
+   
+   
+  // res.setHeader('Content-Type', 'text/plain');
+  // res.setHeader('Content-Length', Buffer.byteLength(req.result, 'utf-8'));
+  // res.send(req.result);
+  
+});
+
+module.exports = { upload ,download, orgUpload};
