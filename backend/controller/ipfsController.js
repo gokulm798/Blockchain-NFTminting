@@ -88,7 +88,7 @@ const upload = asyncHandler(async (req, res) => {
 const download = asyncHandler(async (req, res) => {
   //const { cid } = req.body;
 
-  const cidExists = await data.findOne({ cid:req.body.cid });
+  const cidExists = await dupdata.findOne({ cid:req.body.cid });
    
   if (cidExists==null) {
     res.status(400);

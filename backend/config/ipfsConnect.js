@@ -5,7 +5,7 @@ const { create } = require("ipfs-http-client");
 
 const createIPFSNode = async () => {
   try {
-    const node = create(new URL("http://192.168.64.177:5001"));
+    const node = create(new URL("http://10.0.8.178:5001"));
     console.log("Connected to Daemon");
     return node;
   } catch (error) {
