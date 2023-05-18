@@ -1,6 +1,8 @@
 import React from "react";
 
 const RecordViewer = ({ base64String }) => {
+  console.log(base64String);
+
   return (
     <div id="pdf-container" className="sm:w-[95%] md:w-[60%]">
       <iframe

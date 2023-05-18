@@ -109,7 +109,7 @@ const Hospital = () => {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-          console.log(data._id);
+
           let patAdd = data.account_address;
           let hosAdd = data.hospital_address;
           console.log(hosAdd);
@@ -177,9 +177,11 @@ const Hospital = () => {
     });
     if (response.ok) {
       const data = await response.json();
+      console.log(tokenId);
+      console.log(data.cid);
       contract.mintNFT(tokenId, data.cid);
-      const r = contract.getReceivedValue();
-      console.log(r);
+      // const r = contract.getReceivedValue();
+      // console.log(r);
       setPop(!pop);
       console.log(data);
     } else {

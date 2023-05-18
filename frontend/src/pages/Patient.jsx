@@ -3,10 +3,11 @@ import { Navbar } from "../components/Navbar";
 import RecordContainer from "../components/RecordContainer";
 import RequestContainer from "../components/RequestContainer";
 import SearchBar from "../components/SearchBar";
-
+import { ethers } from "ethers";
 import RecordViewer from "../components/RecordViewer";
 import { useLocation } from "react-router-dom";
 import PopUp from "../components/PopUp";
+import { contract } from "../ConnWallet";
 
 const Patient = (props) => {
   const [currentTab, setCurrentTab] = useState("history");
@@ -143,27 +144,69 @@ const Patient = (props) => {
     fetchMintReq();
   }, [cnt, showReq]);
 
-  const acceptReq = async (request) => {
-    console.log(request._id);
-
-    const response = await fetch(
-      "http://localhost:8000/api/request/mint/check/accept",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${tk}`,
-        },
-        body: JSON.stringify({ reqId: request._id }),
+  const acceptLicReq = async (request) => {
+    if (Meta) {
+      console.log(request._id);
+      try {
+        // sm = await contract.approve();
+        // console.log(sm);
+        contract.respondToLicenseRequest(request.researcher_address, true);
+        const response = await fetch(
+          "http://localhost:8000/api/request/license/check/accept",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tk}`,
+            },
+            body: JSON.stringify({ reqId: request._id }),
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          setCnt(!cnt);
+          // console.log(cnt);
+        } else {
+          throw new Error("Request failed with status: " + response.status);
+        }
+      } catch (error) {
+        console.log(error);
+        //set popup
       }
-    );
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
-      setCnt(!cnt);
-      // console.log(cnt);
-    } else {
-      throw new Error("Request failed with status: " + response.status);
+    }
+  };
+
+  const acceptMintReq = async (request) => {
+    if (Meta) {
+      console.log(request._id);
+      try {
+        // sm = await contract.approve();
+        // console.log(sm);
+
+        const response = await fetch(
+          "http://localhost:8000/api/request/mint/check/accept",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tk}`,
+            },
+            body: JSON.stringify({ reqId: request._id }),
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          setCnt(!cnt);
+          // console.log(cnt);
+        } else {
+          throw new Error("Request failed with status: " + response.status);
+        }
+      } catch (error) {
+        console.log(error);
+        //set popup
+      }
     }
   };
 
@@ -300,8 +343,9 @@ const Patient = (props) => {
                 rColour="hover:text-red-500"
                 aBtn="Accept"
                 rBtn="Reject"
-                acptF={acceptReq}
+                acptF={acceptLicReq}
                 rejtF={rejectReq}
+                RecordDetails={() => {}}
                 filterAcceptedOnly={false}
               />
             ) : (
@@ -311,8 +355,9 @@ const Patient = (props) => {
                 rColour="hover:text-red-500"
                 aBtn="Accept"
                 rBtn="Reject"
-                acptF={acceptReq}
+                acptF={acceptMintReq}
                 rejtF={rejectReq}
+                RecordDetails={() => {}}
                 filterAcceptedOnly={false}
               />
             )}

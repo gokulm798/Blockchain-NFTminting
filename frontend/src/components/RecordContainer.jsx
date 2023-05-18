@@ -56,11 +56,12 @@ const RecordContainer = (props) => {
           className=" bg-green-200/60 max-h-[200px]  text-xl text-white font-mono w-full p-4 rounded-md border-2 border-green-400"
           onClick={() => {
             // setCid(record.cid);
-            console.log(record.cid);
+            console.log(record.token_id);
 
             let cid = record.cid;
             let pid = record.patient_username;
-            recordView(cid, pid);
+            let token = record.token_id;
+            recordView(token, cid, pid);
             // console.log(cid);
             setExpandedRecord(index);
           }}
