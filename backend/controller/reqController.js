@@ -152,13 +152,13 @@ const senderReq = asyncHandler(async (req, res) => {
 //@route           POST /api/request/license
 //@access          Public
 const userRequestLicense = asyncHandler(async (req, res) => {
-  const { request_to, time,token} = req.body;
+  const { request_to, time,token,content} = req.body;
   const sender_username = req.user.username;
   //const cid = req.result.cid
   //console.log(cid)
   //console.log(hospital_username)
 
-  if (!sender_username || !request_to || !token || !time) {
+  if (!sender_username || !request_to || !token || !time||!content) {
     res.status(400);
     throw new Error("Please Enter all the Feilds");
   }
@@ -170,16 +170,49 @@ const userRequestLicense = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Patient not found");
   }
+  const accountExists = await account.findOne({owner_username:request_to})
+  if(accountExists==null){
+    res.status(400);
+    throw new Error("No valid account for patient");
+  }
+  const account_address=accountExists.address
+  //const cid = req.result.cid
+  //console.log(cid)
+  //console.log(hospital_username)
+  const researcherAccountExists = await account.findOne({owner_username:sender_username})
+  if(researcherAccountExists==null){
+    res.status(400);
+    throw new Error("No valid account for researcher");
+  }
+  const researcher_address=researcherAccountExists.address
+  const researcherExists = await User.findOne({ username: request_to });
+  //console.log(userExists)
+  const sender_name=researcherExists.name
+
+  if (patientExists == null) {
+    res.status(400);
+    throw new Error("Patient not found");
+  }
+  
   const userReq = await licenseRequest.create({
     time,
     request_to,
     sender_username,
-    token
+    token,
+    account_address,
+    researcher_address,
+    sender_name,
+    content,
+
   });
 
   if (userReq) {
     res.status(201).json({
       request: true,
+      researcher_address:researcher_address,
+      account_address:account_address,
+      token:token,
+      content:content,
     });
   } else {
     res.status(400);
@@ -202,7 +235,7 @@ const reqCheckLicense = asyncHandler(async (req, res) => {
   }
 });
 //@description     To accept incoming requests
-//@route           POST /api/request/licensecheck/accept
+//@route           POST /api/request/license/check/accept
 //@access          Public
 const reqAcceptLicense = asyncHandler(async (req, res) => {
   const { reqId } = req.body;
@@ -236,8 +269,8 @@ const reqDeclineLicense = asyncHandler(async (req, res) => {
   }
 });
 
-//@description     To track the requests
-//@route           GET /api/request/license/senderCheck
+//@description     To track the requests by researcher
+//@route           GET /api/request/license/sender/check
 //@access          Public
 const senderReqLicense = asyncHandler(async (req, res) => {
   const reqs = await licenseRequest.find({
