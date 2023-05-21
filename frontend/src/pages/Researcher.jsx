@@ -222,32 +222,33 @@ const rejectReq = async (request) => {
     let token = request.token;
     // console.warn(cid);
     let cid = await contract.getNFT(token);
-    /*
     console.warn(cid);
-    try {
-      const response = await fetch("http://localhost:8000/api/nft/download", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${tk}`,
-        },
-        body: JSON.stringify({ cid }),
-      });
+    if (cid != "") {
+      try {
+        const response = await fetch("http://localhost:8000/api/nft/download", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${tk}`,
+          },
+          body: JSON.stringify({ cid }),
+        });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        console.log(data.content);
-        setFileString(data.content);
-      } else {
-        throw new Error("Request failed with status: " + response.status);
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          console.log(data.content);
+          setFileString(data.content);
+        } else {
+          throw new Error("Request failed with status: " + response.status);
+          setFileString("");
+        }
+      } catch (error) {
+        console.log("Error: " + error.message);
         setFileString("");
       }
-    } catch (error) {
-      console.log("Error: " + error.message);
-      setFileString("");
+      setVeiw(true);
     }
-    setVeiw(true);*/
   };
 
   return (
@@ -294,7 +295,7 @@ const rejectReq = async (request) => {
       </div>
       {Veiw && (
         <div
-          className="flex justify-center bg-primary/60 fixed top-0 left-0 w-full h-screen z-20 duration-700"
+          className="flex justify-center bg-primary fixed top-0 left-0 w-full h-screen z-20 duration-700"
           onClick={() => setVeiw(false)}
         >
           <RecordViewer base64String={fileString} />

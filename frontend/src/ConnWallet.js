@@ -11,7 +11,7 @@ await provider.send("eth_requestAccounts", []);
 const signer = provider.getSigner();
 
 // initialize contract
-const contractAddress = "0xd9145CCE52D386f254917e481eB44e9943F39138";
+const contractAddress = "0x2987bAc9461F554F8f8a5b74753237eCe35eD654";
 const contract = new ethers.Contract(contractAddress, recordNft_abi, signer);
 
 export { provider, signer, contract };

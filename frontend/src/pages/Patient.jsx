@@ -179,6 +179,41 @@ const Patient = (props) => {
     }
   };
 
+  const rejectLicReq = async (request) => {
+    if (Meta) {
+      try {
+        await contract.respondToLicenseRequest(false);
+        console.log(request.researcher_address);
+        await contract.respondToLicenseRequest(
+          ethers.utils.getAddress(request.researcher_address),
+          true
+        );
+        const response = await fetch(
+          "http://localhost:8000/api/request/license/check/decline",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tk}`,
+            },
+            body: JSON.stringify({ reqId: request._id }),
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          setCnt(!cnt);
+          // console.log(cnt);
+        } else {
+          throw new Error("Request failed with status: " + response.status);
+        }
+      } catch (error) {
+        console.log(error);
+        //set popup
+      }
+    }
+  };
+
   const acceptMintReq = async (request) => {
     if (Meta) {
       console.log(request._id);
@@ -212,7 +247,7 @@ const Patient = (props) => {
     }
   };
 
-  const rejectReq = async (request) => {
+  const rejectMintReq = async (request) => {
     const response = await fetch(
       "http://localhost:8000/api/request/mint/check/decline",
       {
@@ -346,7 +381,7 @@ const Patient = (props) => {
                 aBtn="Accept"
                 rBtn="Reject"
                 acptF={acceptLicReq}
-                rejtF={rejectReq}
+                rejtF={rejectLicReq}
                 RecordDetails={() => {}}
                 filterAcceptedOnly={false}
               />
@@ -358,7 +393,7 @@ const Patient = (props) => {
                 aBtn="Accept"
                 rBtn="Reject"
                 acptF={acceptMintReq}
-                rejtF={rejectReq}
+                rejtF={rejectMintReq}
                 RecordDetails={() => {}}
                 filterAcceptedOnly={false}
               />
