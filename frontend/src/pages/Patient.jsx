@@ -105,7 +105,7 @@ const Patient = (props) => {
         if (response.ok) {
           const lic = await response.json();
           console.log(lic);
-          console.log(lic._id);
+          // console.log(lic._id);
           setLicRequest(lic);
         } else {
           throw new Error("Request failed with status: " + response.status);
@@ -132,7 +132,7 @@ const Patient = (props) => {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-          console.log(data._id);
+
           setMintRequest(data);
         } else {
           throw new Error("Request failed with status: " + response.status);
@@ -146,11 +146,13 @@ const Patient = (props) => {
 
   const acceptLicReq = async (request) => {
     if (Meta) {
-      console.log(request._id);
       try {
         // sm = await contract.approve();
-        // console.log(sm);
-        contract.respondToLicenseRequest(request.researcher_address, true);
+        console.log(request.researcher_address);
+        await contract.respondToLicenseRequest(
+          ethers.utils.getAddress(request.researcher_address),
+          true
+        );
         const response = await fetch(
           "http://localhost:8000/api/request/license/check/accept",
           {
@@ -181,7 +183,7 @@ const Patient = (props) => {
     if (Meta) {
       console.log(request._id);
       try {
-        // sm = await contract.approve();
+        await contract.accept();
         // console.log(sm);
 
         const response = await fetch(
@@ -262,7 +264,7 @@ const Patient = (props) => {
   const records = ["Demo Post 1", "Demo Post 2", "Demo Post 3", "Demo Post 4"];
   // const record = [{ hi: "demo" }];
   // const requests = ["Demo Request 1", "Demo Request 2"];
-  const handleRecordView = async (cid) => {
+  const handleRecordView = async (token, cid, pid) => {
     console.log(cid);
     try {
       const response = await fetch("http://localhost:8000/api/nft/download", {

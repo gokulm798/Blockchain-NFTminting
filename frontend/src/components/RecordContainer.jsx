@@ -39,7 +39,7 @@ const RecordContainer = (props) => {
     // const time = ;
     //
     // const [hours, minutes] = time.split(":").map(Number);
-    const hours = parseInt(time);
+    const hours = parseFloat(time);
     const seconds = hours * 3600;
 
     console.log(seconds);

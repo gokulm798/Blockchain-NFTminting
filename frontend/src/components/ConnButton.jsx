@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { provider, signer, contract } from "../ConnWallet";
+import { ethers } from "ethers";
 const ConnButton = ({ handleConnect }) => {
   const [ConBtn, setConBtn] = useState("Connect Wallet");
   const [Connection, setConnection] = useState(false);
@@ -11,9 +12,13 @@ const ConnButton = ({ handleConnect }) => {
   const connWallet = async () => {
     if (window.ethereum) {
       // console.log("Metamask detected");
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
+      // const accounts = await window.ethereum.request({
+      //   method: "eth_requestAccounts",
+      // });
+      const account = await signer.getAddress();
+      const accounts = ethers.utils.getAddress(account);
+
+      console.log(typeof accounts);
 
       // const accounts = await provider.listAccounts();
       setConBtn(
@@ -22,7 +27,7 @@ const ConnButton = ({ handleConnect }) => {
 
       console.log(accounts);
       setAccounts(accounts);
-      setConnection(true);
+
       const response = await fetch("http://localhost:8000/api/accounts/", {
         method: "POST",
         headers: {
@@ -38,10 +43,16 @@ const ConnButton = ({ handleConnect }) => {
         }
       } else {
         throw new Error("Request failed with status: " + response.status);
+        setConnection(false);
       }
     }
   };
-  handleConnect(Connection, accounts);
+  useEffect(() => {
+    if (accounts != "") {
+      handleConnect(Connection, accounts);
+    }
+  }, [Connection, accounts]);
+
   return (
     <div>
       <button

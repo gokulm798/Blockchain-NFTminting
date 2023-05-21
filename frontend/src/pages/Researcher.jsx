@@ -5,6 +5,7 @@ import RecordContainer from "../components/RecordContainer";
 import RequestContainer from "../components/RequestContainer";
 import PopUp from "../components/PopUp";
 import { contract } from "../ConnWallet";
+import RecordViewer from "../components/RecordViewer";
 
 const Researcher = () => {
   const [currentTab, setCurrentTab] = useState("history");
@@ -12,13 +13,14 @@ const Researcher = () => {
   const [Feed, setFeed] = useState([]);
   const [OrgFeed, setOrgFeed] = useState([]);
   const [Request, setRequest] = useState([]);
-  const [cnt, setCnt] = useState(true);
+  // const [cnt, setCnt] = useState(true);
   const [token, setToken] = useState("");
-  const [cid, setCid] = useState("");
+  // const [cid, setCid] = useState("");
   const [pid, setPid] = useState("");
-
+  const [Veiw, setVeiw] = useState(false);
   const [Meta, setMeta] = useState(false);
   const [Account, setAccount] = useState("");
+  const [fileString, setFileString] = useState("");
 
   // const records = ["Demo Post 1", "Demo Post 2", "Demo Post 3"];
   // const requests = ["Demo Request 1", "Demo Request 2"];
@@ -70,7 +72,8 @@ const Researcher = () => {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-          console.log(data._id);
+          console.log(data);
+          //evide
           setRequest(data);
         } else {
           throw new Error("Request failed with status: " + response.status);
@@ -80,11 +83,11 @@ const Researcher = () => {
       }
     };
     fetchReq();
-    console.log(cnt);
-  }, [cnt]);
-  setInterval(() => {
-    setCnt(!cnt);
-  }, 20000);
+    // console.log(cnt);
+  }, []);
+  // setInterval(() => {
+  //   setCnt(!cnt);
+  // }, 20000);
   /*
 const acceptReq = async (request) => {
   console.log(request._id);
@@ -166,10 +169,14 @@ const rejectReq = async (request) => {
 
   const handleLicenseReq = async (e, time) => {
     e.preventDefault();
-
+    console.log(Meta);
     if (Meta) {
       try {
         await contract.requestApprovalForLicense(token, time);
+        let content = `License`;
+        console.log(pid);
+        console.log(String(time));
+        console.log(token);
 
         const response = await fetch(
           "http://localhost:8000/api/request/license",
@@ -179,7 +186,12 @@ const rejectReq = async (request) => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${tk}`,
             },
-            body: JSON.stringify({ request_to: pid, time, token }),
+            body: JSON.stringify({
+              request_to: pid,
+              time: String(time),
+              token,
+              content,
+            }),
           }
         );
 
@@ -187,7 +199,7 @@ const rejectReq = async (request) => {
           const data = await response.json();
           console.log(data);
           console.log(data.content);
-          setFileString(data.content);
+          // setFileString(data.content);
         } else {
           throw new Error("Request failed with status: " + response.status);
         }
@@ -195,8 +207,6 @@ const rejectReq = async (request) => {
         console.log("Error: " + error.message);
       }
 
-      console.log(cid);
-      console.log(time);
       setExpanded(false);
     }
   };
@@ -205,6 +215,39 @@ const rejectReq = async (request) => {
     e.preventDefault();
     // console.log(cid);
     setExpanded(!expanded);
+  };
+
+  const handleLicensedNft = async (request) => {
+    console.log(request.token);
+    let token = request.token;
+    // console.warn(cid);
+    let cid = await contract.getNFT(token);
+    /*
+    console.warn(cid);
+    try {
+      const response = await fetch("http://localhost:8000/api/nft/download", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tk}`,
+        },
+        body: JSON.stringify({ cid }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        console.log(data.content);
+        setFileString(data.content);
+      } else {
+        throw new Error("Request failed with status: " + response.status);
+        setFileString("");
+      }
+    } catch (error) {
+      console.log("Error: " + error.message);
+      setFileString("");
+    }
+    setVeiw(true);*/
   };
 
   return (
@@ -234,7 +277,7 @@ const rejectReq = async (request) => {
             records={Feed}
             licenseNft={handleViewNft}
             recordView={(token, cid, pid) => {
-              setCid(cid);
+              // setCid(cid);
               setPid(pid);
               setToken(token);
             }}
@@ -242,9 +285,21 @@ const rejectReq = async (request) => {
             expanded={expanded}
           />
         ) : (
-          <RequestContainer requests={Request} filterAcceptedOnly={false} />
+          <RequestContainer
+            requests={Request}
+            filterAcceptedOnly={false}
+            RecordDetails={handleLicensedNft}
+          />
         )}
       </div>
+      {Veiw && (
+        <div
+          className="flex justify-center bg-primary/60 fixed top-0 left-0 w-full h-screen z-20 duration-700"
+          onClick={() => setVeiw(false)}
+        >
+          <RecordViewer base64String={fileString} />
+        </div>
+      )}
     </div>
   );
 };
