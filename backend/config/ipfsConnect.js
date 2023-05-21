@@ -5,7 +5,11 @@ const { create } = require("ipfs-http-client");
 
 const createIPFSNode = async () => {
   try {
+<<<<<<< HEAD
     const node = create(new URL("http://192.168.78.177:5001"));
+=======
+    const node = create(new URL("http://192.168.58.177:5001"));
+>>>>>>> refs/remotes/origin/main
     console.log("Connected to Daemon");
     return node;
   } catch (error) {

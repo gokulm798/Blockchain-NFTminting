@@ -15,34 +15,48 @@ const diagnosis = require("../models/diagnosis");
 //@route           POST /api/request/mint
 //@access          Public
 const userRequest = asyncHandler(async (req, res) => {
-  const { request_to, Content,diagnosis_code,doc_name } = req.body;
+  const { request_to, Content, diagnosis_code, doc_name } = req.body;
   const sender_username = req.user.username;
-  
-  const diagnosisData = await diagnosis.findOne({ diagnosis_code:req.body.diagnosis_code },{diagnosis_code:0,_id:0});
-  if (diagnosisData==null) {
+
+  const diagnosisData = await diagnosis.findOne(
+    { diagnosis_code: req.body.diagnosis_code },
+    { diagnosis_code: 0, _id: 0 }
+  );
+  if (diagnosisData == null) {
     res.status(400);
     throw new Error("Diseases not found");
-  }  
+  }
 
-const diagnosis_disease = diagnosisData.diagnosis_disease
+  const diagnosis_disease = diagnosisData.diagnosis_disease;
 
-  const accountExists = await account.findOne({owner_username:request_to})
-  if(accountExists==null){
+  const accountExists = await account.findOne({ owner_username: request_to });
+  if (accountExists == null) {
     res.status(400);
     throw new Error("No valid account for user");
   }
-  const account_address=accountExists.address
+  const account_address = accountExists.address;
   //const cid = req.result.cid
   //console.log(cid)
   //console.log(hospital_username)
-  const hospitalAccountExists = await account.findOne({owner_username:sender_username})
-  if(hospitalAccountExists==null){
+  const hospitalAccountExists = await account.findOne({
+    owner_username: sender_username,
+  });
+  if (hospitalAccountExists == null) {
     res.status(400);
     throw new Error("No valid account for user");
   }
-  const hospital_address=hospitalAccountExists.address
+  const hospital_address = hospitalAccountExists.address;
 
-  if (!sender_username || !request_to || !Content||! diagnosis_code|| !doc_name|| !account_address ||!hospital_address||!diagnosis_disease) {
+  if (
+    !sender_username ||
+    !request_to ||
+    !Content ||
+    !diagnosis_code ||
+    !doc_name ||
+    !account_address ||
+    !hospital_address ||
+    !diagnosis_disease
+  ) {
     res.status(400);
     throw new Error("Please Enter all the Feilds");
   }
@@ -68,9 +82,9 @@ const diagnosis_disease = diagnosisData.diagnosis_disease
   if (userReq) {
     res.status(201).json({
       request: true,
-      account_address:userReq.account_address,
-      hospital_address:userReq.hospital_address,
-      diagnosis_disease:userReq.diagnosis_disease,
+      account_address: userReq.account_address,
+      hospital_address: userReq.hospital_address,
+      diagnosis_disease: userReq.diagnosis_disease,
     });
   } else {
     res.status(400);
@@ -152,17 +166,17 @@ const senderReq = asyncHandler(async (req, res) => {
 //@route           POST /api/request/license
 //@access          Public
 const userRequestLicense = asyncHandler(async (req, res) => {
-  const { request_to, time,token,content} = req.body;
+  const { request_to, time, token, content } = req.body;
   const sender_username = req.user.username;
   //const cid = req.result.cid
   //console.log(cid)
   //console.log(hospital_username)
 
-  if (!sender_username || !request_to || !token || !time||!content) {
+  if (!sender_username || !request_to || !token || !time || !content) {
     res.status(400);
     throw new Error("Please Enter all the Feilds");
   }
-
+  //console.log("hiiiiiii");
   const patientExists = await User.findOne({ username: request_to });
   //console.log(userExists)
 
@@ -170,30 +184,37 @@ const userRequestLicense = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Patient not found");
   }
-  const accountExists = await account.findOne({owner_username:request_to})
-  if(accountExists==null){
+  const accountExists = await account.findOne({ owner_username: request_to });
+  if (accountExists == null) {
     res.status(400);
     throw new Error("No valid account for patient");
   }
-  const account_address=accountExists.address
+  const account_address = accountExists.address;
   //const cid = req.result.cid
   //console.log(cid)
   //console.log(hospital_username)
-  const researcherAccountExists = await account.findOne({owner_username:sender_username})
-  if(researcherAccountExists==null){
+  const researcherAccountExists = await account.findOne({
+    owner_username: sender_username,
+  });
+  if (researcherAccountExists == null) {
     res.status(400);
     throw new Error("No valid account for researcher");
   }
+<<<<<<< HEAD
   const researcher_address=researcherAccountExists.address
   const researcherExists = await User.findOne({ username:  sender_username});
+=======
+  const researcher_address = researcherAccountExists.address;
+  const researcherExists = await User.findOne({ username: request_to });
+>>>>>>> refs/remotes/origin/main
   //console.log(userExists)
-  const sender_name=researcherExists.name
+  const sender_name = researcherExists.name;
 
   if (patientExists == null) {
     res.status(400);
     throw new Error("Patient not found");
   }
-  
+
   const userReq = await licenseRequest.create({
     time,
     request_to,
@@ -203,16 +224,15 @@ const userRequestLicense = asyncHandler(async (req, res) => {
     researcher_address,
     sender_name,
     content,
-
   });
 
   if (userReq) {
     res.status(201).json({
       request: true,
-      researcher_address:researcher_address,
-      account_address:account_address,
-      token:token,
-      content:content,
+      researcher_address: researcher_address,
+      account_address: account_address,
+      token: token,
+      content: content,
     });
   } else {
     res.status(400);

@@ -19,10 +19,11 @@ const Hospital = () => {
   // const [patAdd, setPatAdd] = useState("");
   const [DiaCode, setDiaCode] = useState("");
   const [fileBase64String, setFileBase64String] = useState("");
+  let cid = "";
 
   const [Meta, setMeta] = useState(false);
   const [Account, setAccount] = useState("");
-
+  // const [cid, setCid] = useState("");
   const tk = sessionStorage.getItem("tk");
   const [cnt, setCnt] = useState(true);
   console.log(tk);
@@ -109,11 +110,11 @@ const Hospital = () => {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-          console.log(data._id);
-          let patAdd = data.account_address;
-          let hosAdd = data.hospital_address;
+
+          let patAdd = ethers.utils.getAddress(data.account_address);
+          let hosAdd = ethers.utils.getAddress(data.hospital_address);
           console.log(hosAdd);
-          console.log(patAdd);
+          console.log(typeof patAdd);
           contract.setOwnersAndRequestApproval(hosAdd, patAdd);
         } else {
           throw new Error("Request failed with status: " + response.status);
@@ -153,7 +154,7 @@ const Hospital = () => {
     const tokenId = ethers.utils.keccak256(
       utf8Encoder.encode(fileBase64String)
     );
-    // console.log(hash);
+    console.log(typeof tokenId);
 
     console.log(DiaCode);
     console.log(Doc);
@@ -177,9 +178,17 @@ const Hospital = () => {
     });
     if (response.ok) {
       const data = await response.json();
-      contract.mintNFT(tokenId, data.cid);
-      const r = contract.getReceivedValue();
-      console.log(r);
+      console.log(tokenId);
+      console.log(data.cid);
+      cid = data.cid;
+      try {
+        await contract.mintNFT(tokenId, data.cid);
+        NftMinted();
+      } catch (error) {
+        console.log(error);
+      }
+      // const r = contract.getReceivedValue();
+      // console.log(r);
       setPop(!pop);
       console.log(data);
     } else {
@@ -187,12 +196,31 @@ const Hospital = () => {
     }
   };
 
+  const NftMinted = async () => {
+    console.log(cid);
+    const response = await fetch("http://localhost:8000/api/nft/upload/mint", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tk}`,
+      },
+      body: JSON.stringify({
+        mint: true,
+        cid,
+      }),
+    });
+
+    if (response.ok) {
+      console.log("Success");
+    }
+  };
   const handleUpload = async (request) => {
     console.log(request);
     setPid(request.request_to);
     setDiaCode(request.diagnosis_code);
     setDoc(request.doc_name);
-
+    // setCid(request.cid);
+    // console.log(request.cid);
     setPop(!pop);
   };
 
