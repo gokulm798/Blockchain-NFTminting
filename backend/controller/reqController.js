@@ -27,6 +27,7 @@ const userRequest = asyncHandler(async (req, res) => {
     throw new Error("Diseases not found");
   }
 
+
   const diagnosis_disease = diagnosisData.diagnosis_disease;
 
   const accountExists = await account.findOne({ owner_username: request_to });
@@ -46,6 +47,12 @@ const userRequest = asyncHandler(async (req, res) => {
     throw new Error("No valid account for user");
   }
   const hospital_address = hospitalAccountExists.address;
+  
+  const hospitalExists = await User.findOne({ username: sender_username });
+
+
+  const sender_name =hospitalExists.name
+
 
   if (
     !sender_username ||
@@ -55,7 +62,8 @@ const userRequest = asyncHandler(async (req, res) => {
     !doc_name ||
     !account_address ||
     !hospital_address ||
-    !diagnosis_disease
+    !diagnosis_disease||
+    !sender_name
   ) {
     res.status(400);
     throw new Error("Please Enter all the Feilds");
@@ -77,6 +85,7 @@ const userRequest = asyncHandler(async (req, res) => {
     account_address,
     hospital_address,
     diagnosis_disease,
+    sender_name
   });
 
   if (userReq) {
@@ -200,13 +209,8 @@ const userRequestLicense = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("No valid account for researcher");
   }
-<<<<<<< HEAD
   const researcher_address=researcherAccountExists.address
   const researcherExists = await User.findOne({ username:  sender_username});
-=======
-  const researcher_address = researcherAccountExists.address;
-  const researcherExists = await User.findOne({ username: request_to });
->>>>>>> refs/remotes/origin/main
   //console.log(userExists)
   const sender_name = researcherExists.name;
 
