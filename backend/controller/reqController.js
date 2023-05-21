@@ -185,7 +185,7 @@ const userRequestLicense = asyncHandler(async (req, res) => {
     throw new Error("No valid account for researcher");
   }
   const researcher_address=researcherAccountExists.address
-  const researcherExists = await User.findOne({ username: request_to });
+  const researcherExists = await User.findOne({ username:  sender_username});
   //console.log(userExists)
   const sender_name=researcherExists.name
 
