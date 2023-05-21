@@ -14,6 +14,7 @@ const mintRequestSchema = mongoose.Schema(
     account_address:{ type: "String", required: true },
     hospital_address:{ type: "String", required: true },
     diagnosis_disease:{ type: "String", required: true },
+    sender_name:{type:"String",required:true},
    
   },
   { timestamps: true }
