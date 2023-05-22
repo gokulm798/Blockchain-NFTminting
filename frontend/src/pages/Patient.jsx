@@ -383,7 +383,7 @@ const Patient = (props) => {
                 acptF={acceptLicReq}
                 rejtF={rejectLicReq}
                 RecordDetails={() => {}}
-                filterAcceptedOnly={false}
+                filter="license"
               />
             ) : (
               <RequestContainer
@@ -395,7 +395,7 @@ const Patient = (props) => {
                 acptF={acceptMintReq}
                 rejtF={rejectMintReq}
                 RecordDetails={() => {}}
-                filterAcceptedOnly={false}
+                filter="mint"
               />
             )}
           </>

@@ -262,7 +262,7 @@ const Hospital = () => {
           <RequestContainer
             requests={Request}
             RecordDetails={handleUpload}
-            filterAcceptedOnly={true}
+            filter="accepted"
           />
         )}
       </div>
