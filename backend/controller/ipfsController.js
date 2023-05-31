@@ -5,6 +5,7 @@ const {data,dupdata} = require("../models/ipfs");
 const {User,detail} = require("../models/user");
 const diagnosis = require("../models/diagnosis");
 const account = require("../models/account");
+const { nftRequest } = require("../models/userRequest");
 
 
 //@description     Upload a new NFT
@@ -106,13 +107,16 @@ const download = asyncHandler(async (req, res) => {
   
 });
 
-//@description     To set the feed and  history
+//@description     To set the feed and  history, real upload
 //@route           GET /api/nft/upload/mint
 //@access          Public
 const orgUpload = asyncHandler(async (req, res) => {
-  const  {cid,mint} = req.body;
+  const  {cid,mint,reqId} = req.body;
   //console.log(cid)
-
+  //const { reqId } = req.body;
+  const change = await nftRequest.findByIdAndUpdate(reqId, {
+    $set: { isSenderRead: true },
+  });
   const cidExists = await data.findOne({ cid:cid});
    
   if (cidExists==null) {
