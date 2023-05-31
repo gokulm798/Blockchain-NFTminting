@@ -1,10 +1,13 @@
 const asyncHandler = require("express-async-handler");
+const fs = require('fs');
+const path = require('path');
 
 const generateToken = require("../config/generateToken");
 const {data,dupdata} = require("../models/ipfs");
 const {User,detail} = require("../models/user");
 const diagnosis = require("../models/diagnosis");
 const account = require("../models/account");
+const { nftRequest } = require("../models/userRequest");
 
 
 //@description     Upload a new NFT
@@ -93,12 +96,29 @@ const download = asyncHandler(async (req, res) => {
   if (cidExists==null) {
     res.status(400);
     throw new Error("CID  match not found");
-  }  
+  } 
+  
+  
+  const base64String = req.result
+
+  const binaryData = Buffer.from(base64String, 'base64');
+
+  // Generate a temporary file path
+  const tempFilePath = path.join(__dirname, 'temp', 'output.pdf');
+
+  // Write the binary data to a temporary file
+  fs.writeFileSync(tempFilePath, binaryData);
+
+  // Send the file as the response
+  res.sendFile(tempFilePath, () => {
+    // Cleanup: delete the temporary file after sending
+  fs.unlinkSync(tempFilePath);
+});
   //console.log(req.result) 
-   res.json({
-    download:true,
-    content:req.result
-  })
+  //  res.json({
+  //   download:true,
+  //   content:req.result
+  // })
 
   // res.setHeader('Content-Type', 'text/plain');
   // res.setHeader('Content-Length', Buffer.byteLength(req.result, 'utf-8'));
@@ -106,13 +126,16 @@ const download = asyncHandler(async (req, res) => {
   
 });
 
-//@description     To set the feed and  history
+//@description     To set the feed and  history, real upload
 //@route           GET /api/nft/upload/mint
 //@access          Public
 const orgUpload = asyncHandler(async (req, res) => {
-  const  {cid,mint} = req.body;
+  const  {cid,mint,reqId} = req.body;
   //console.log(cid)
-
+  //const { reqId } = req.body;
+  const change = await nftRequest.findByIdAndUpdate(reqId, {
+    $set: { isSenderRead: true },
+  });
   const cidExists = await data.findOne({ cid:cid});
    
   if (cidExists==null) {
