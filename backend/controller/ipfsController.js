@@ -1,4 +1,6 @@
 const asyncHandler = require("express-async-handler");
+const fs = require('fs');
+const path = require('path');
 
 const generateToken = require("../config/generateToken");
 const {data,dupdata} = require("../models/ipfs");
@@ -94,12 +96,29 @@ const download = asyncHandler(async (req, res) => {
   if (cidExists==null) {
     res.status(400);
     throw new Error("CID  match not found");
-  }  
+  } 
+  
+  
+  const base64String = req.result
+
+  const binaryData = Buffer.from(base64String, 'base64');
+
+  // Generate a temporary file path
+  const tempFilePath = path.join(__dirname, 'temp', 'output.pdf');
+
+  // Write the binary data to a temporary file
+  fs.writeFileSync(tempFilePath, binaryData);
+
+  // Send the file as the response
+  res.sendFile(tempFilePath, () => {
+    // Cleanup: delete the temporary file after sending
+  fs.unlinkSync(tempFilePath);
+});
   //console.log(req.result) 
-   res.json({
-    download:true,
-    content:req.result
-  })
+  //  res.json({
+  //   download:true,
+  //   content:req.result
+  // })
 
   // res.setHeader('Content-Type', 'text/plain');
   // res.setHeader('Content-Length', Buffer.byteLength(req.result, 'utf-8'));
