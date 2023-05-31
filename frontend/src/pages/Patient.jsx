@@ -8,6 +8,7 @@ import RecordViewer from "../components/RecordViewer";
 import { useLocation } from "react-router-dom";
 import PopUp from "../components/PopUp";
 import { contract } from "../ConnWallet";
+import { toast } from "react-toastify";
 
 const Patient = (props) => {
   const [currentTab, setCurrentTab] = useState("history");
@@ -149,10 +150,14 @@ const Patient = (props) => {
       try {
         // sm = await contract.approve();
         console.log(request.researcher_address);
-        await contract.respondToLicenseRequest(
-          ethers.utils.getAddress(request.researcher_address),
-          true
-        );
+        try {
+          await contract.respondToLicenseRequest(
+            ethers.utils.getAddress(request.researcher_address),
+            true
+          );
+        } catch (error) {
+          toast.error(error.message);
+        }
         const response = await fetch(
           "http://localhost:8000/api/request/license/check/accept",
           {
@@ -176,7 +181,7 @@ const Patient = (props) => {
         console.log(error);
         //set popup
       }
-    }
+    } else toast.info("Connect your wallet");
   };
 
   const rejectLicReq = async (request) => {
@@ -211,10 +216,11 @@ const Patient = (props) => {
         console.log(error);
         //set popup
       }
-    }
+    } else toast.info("Connect your wallet");
   };
 
   const acceptMintReq = async (request) => {
+    console.log(Meta);
     if (Meta) {
       console.log(request._id);
       try {
@@ -244,7 +250,7 @@ const Patient = (props) => {
         console.log(error);
         //set popup
       }
-    }
+    } else toast.info("Connect your wallet");
   };
 
   const rejectMintReq = async (request) => {

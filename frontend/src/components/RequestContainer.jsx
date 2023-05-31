@@ -64,8 +64,8 @@ const RequestContainer = (props) => {
           )}
           {LicMsg && (
             <span className="ml-2">
-              {/* {request.sender_username} has a request for license of
-              {request.diagnosis_diesease} records {request.doc_name}. */}
+              {request.sender_username} has a request for license of
+              {request.diagnosis_diesease} records {request.doc_name}.
             </span>
           )}
           {ResMsg && (

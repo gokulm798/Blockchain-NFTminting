@@ -15,6 +15,11 @@ const ConnButton = ({ handleConnect }) => {
       // const accounts = await window.ethereum.request({
       //   method: "eth_requestAccounts",
       // });
+
+      //Request permission to metamask to connect to user's account
+      // console.log("Permission");
+      await provider.send("eth_requestAccounts", []);
+
       const account = await signer.getAddress();
       const accounts = ethers.utils.getAddress(account);
 

@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
 import { provider, signer, contract } from "../ConnWallet";
 import Mint from "./Mint";
+import { parseEther } from "ethers/lib/utils";
+import { toast } from "react-toastify";
 
 const Hospital = () => {
   // const location = useLocation();
@@ -115,14 +117,21 @@ const Hospital = () => {
           let hosAdd = ethers.utils.getAddress(data.hospital_address);
           console.log(hosAdd);
           console.log(typeof patAdd);
-          contract.setOwnersAndRequestApproval(hosAdd, patAdd);
+          try {
+            await contract.setOwnersAndRequestApproval(hosAdd, patAdd);
+            toast.success(`Request sent to ${Pid}`);
+          } catch (error) {
+            console.log(error);
+            toast.error(error.data.message);
+          }
         } else {
           throw new Error("Request failed with status: " + response.status);
         }
       } catch (error) {
         console.log("Error: " + error.message);
+        toast.error(error);
       }
-    }
+    } else toast.info("Connect your wallet");
     // setResult(result.output);
   };
 
@@ -181,8 +190,9 @@ const Hospital = () => {
       console.log(tokenId);
       console.log(data.cid);
       cid = data.cid;
+      const amt = ethers.utils.parseEther("0.01");
       try {
-        await contract.mintNFT(tokenId, data.cid);
+        await contract.mintNFT(tokenId, data.cid, { value: amt });
         NftMinted();
       } catch (error) {
         console.log(error);
