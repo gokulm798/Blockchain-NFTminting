@@ -6,6 +6,20 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Hospital from "./pages/Hospital";
 import Mint from "./pages/Mint";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+/*toast({
+position: "bottom-center",
+autoClose: 5000,
+hideProgressBar: false,
+closeOnClick: true,
+pauseOnHover: true,
+draggable: true,
+progress: undefined,
+theme: "light",
+});*/
+
 function App() {
   return (
     <>
@@ -16,9 +30,22 @@ function App() {
 
           <Route path="/Hospital" element={<Hospital />}></Route>
           <Route path="/Researcher" element={<Researcher />}></Route>
-          <Route path="/Hospital/Mint" element={<Mint />}></Route>
         </Routes>
       </BrowserRouter>
+      <ToastContainer
+        toastClassName="min-w-40"
+        className={""}
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 }

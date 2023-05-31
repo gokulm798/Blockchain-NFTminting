@@ -28,7 +28,10 @@ const Mint = ({ handleSubmit }) => {
           list={"suggestions"}
           label="Patient Name/Id"
           value={Pid}
-          onChange={(event) => setPid(event.target.value)}
+          onChange={(event) => {
+            setPid(event.target.value);
+            setError(false);
+          }}
         />
         {/* <datalist id="suggestions" className="bg-white">
             {suggestions.map((suggestion, index) => (
@@ -40,12 +43,18 @@ const Mint = ({ handleSubmit }) => {
         <InputBox
           label="Docter's Name"
           value={Doc}
-          onChange={(event) => setDoc(event.target.value)}
+          onChange={(event) => {
+            setDoc(event.target.value);
+            setError(false);
+          }}
         ></InputBox>
         <InputBox
           label="Diagnosis Code"
           value={DiaCode}
-          onChange={(event) => setDiaCode(event.target.value)}
+          onChange={(event) => {
+            setDiaCode(event.target.value);
+            setError(false);
+          }}
         ></InputBox>
         <div className="h-8">
           {Error && (

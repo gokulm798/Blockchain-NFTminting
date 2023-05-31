@@ -1,12 +1,13 @@
 import React from "react";
 
-const RecordViewer = ({ base64String }) => {
-  console.log(base64String);
+const RecordViewer = ({ pdfUrl }) => {
+  // console.log(base64String);
 
   return (
     <div id="pdf-container" className="sm:w-[95%] md:w-[60%]">
       <iframe
-        src={`data:application/pdf;base64,${base64String}`}
+        // src={`data:application/pdf;base64,${base64String}`}
+        src={pdfUrl}
         title="PDF Viewer"
         width="100%"
         height="100%"

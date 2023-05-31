@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const RequestContainer = (props) => {
   const {
@@ -10,12 +10,25 @@ const RequestContainer = (props) => {
     acptF,
     rejtF,
     RecordDetails,
-    filterAcceptedOnly,
+    filter,
   } = props;
+  const [LicMsg, setLicMsg] = useState(false);
+  const [MintMsg, setMintMsg] = useState(false);
+  const [Accepted, setAccepted] = useState(false);
+  const [ResMsg, setResMsg] = useState(false);
   let filteredRequests = requests;
-  if (filterAcceptedOnly) {
-    filteredRequests = requests.filter((request) => request.isAccept);
-  }
+  useEffect(() => {
+    if (filter == "accepted") {
+      filteredRequests = requests.filter((request) => request.isAccept);
+      setAccepted(true);
+    } else if (filter == "license") {
+      setLicMsg(true);
+    } else if (filter == "mint") {
+      setMintMsg(true);
+    } else {
+      setResMsg(true);
+    }
+  }, []);
 
   if (filteredRequests.length === 0) {
     return <div className="text-2xl text-red-700">No requests found</div>;
@@ -32,9 +45,33 @@ const RequestContainer = (props) => {
           }}
         >
           {/* Display request details */}
-          {request.Content}
-          {filterAcceptedOnly && request.isAccept && (
-            <span className="ml-2">has been accepted</span>
+          {/* {request.Content} */}
+          {Accepted && request.isAccept && (
+            <span>
+              Thomas KK[PTHO6647
+              {/* {request.request_to} */}] has accepted the request for minting{" "}
+              {request.diagnosis_diesease} treatment records under{" "}
+              {request.doc_name} as Nfts.
+            </span>
+          )}
+          {MintMsg && (
+            <span className="ml-0">
+              Rajasri Hospital [{request.sender_username}] : Request to mint
+              your medical records for Fracture under Dr.
+              {/* {request.diagnosis_diesease} */}
+              {request.doc_name} as Nfts.
+            </span>
+          )}
+          {LicMsg && (
+            <span className="ml-2">
+              {request.sender_username} has a request for license of
+              {request.diagnosis_diesease} records {request.doc_name}.
+            </span>
+          )}
+          {ResMsg && (
+            <span>
+              Thomas KK [PTHO6647] has licensed you medical records on Fracture
+            </span>
           )}
           {aBtn && (
             <div className="flex justify-end">

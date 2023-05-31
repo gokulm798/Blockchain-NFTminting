@@ -172,8 +172,9 @@ const rejectReq = async (request) => {
     console.log(Meta);
     if (Meta) {
       try {
-        await contract.requestApprovalForLicense(token, time);
+        await contract.requestApprovalForLicense(token, 72);
         let content = `License`;
+        9;
         console.log(pid);
         console.log(String(time));
         console.log(token);
@@ -221,8 +222,9 @@ const rejectReq = async (request) => {
     console.log(request.token);
     let token = request.token;
     // console.warn(cid);
-    let cid = await contract.getNFT(token);
-    console.warn(cid);
+    let res = await contract.getNFT(token);
+    let cid = res[0];
+    console.warn(res);
     if (cid != "") {
       try {
         const response = await fetch("http://localhost:8000/api/nft/download", {
@@ -288,7 +290,7 @@ const rejectReq = async (request) => {
         ) : (
           <RequestContainer
             requests={Request}
-            filterAcceptedOnly={false}
+            // filterAcceptedOnly={false}
             RecordDetails={handleLicensedNft}
           />
         )}
