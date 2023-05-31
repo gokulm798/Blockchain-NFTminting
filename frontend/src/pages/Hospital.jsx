@@ -18,6 +18,7 @@ const Hospital = () => {
   const [tokenId, SetTokenId] = useState("");
   const [Pid, setPid] = useState("");
   const [Doc, setDoc] = useState("");
+  const [RequestId, setRequestId] = useState("");
   // const [patAdd, setPatAdd] = useState("");
   const [DiaCode, setDiaCode] = useState("");
   const [fileBase64String, setFileBase64String] = useState("");
@@ -217,6 +218,7 @@ const Hospital = () => {
       body: JSON.stringify({
         mint: true,
         cid,
+        reqId: RequestId,
       }),
     });
 
@@ -232,6 +234,7 @@ const Hospital = () => {
     // setCid(request.cid);
     // console.log(request.cid);
     setPop(!pop);
+    setRequestId(request._id);
   };
 
   //   contract.createNFT(t, nm, desc, doc);
