@@ -108,7 +108,6 @@ const download = asyncHandler(async (req, res) => {
 
   // Write the binary data to a temporary file
   fs.writeFileSync(tempFilePath, binaryData);
-
   // Send the file as the response
   res.sendFile(tempFilePath, () => {
     // Cleanup: delete the temporary file after sending
