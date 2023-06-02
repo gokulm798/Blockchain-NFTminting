@@ -67,6 +67,11 @@ const authUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
 
   const user = await User.findOne({ username });
+  if(user==null)
+  {
+    res.status(404);
+    throw new Error("User Not Found");
+  }
 
   if (user && (await user.matchPassword(password))) {
     res.json({
@@ -77,7 +82,7 @@ const authUser = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(401);
-    throw new Error("Invalid Username or Password");
+    throw new Error("Invalid Password");
   }
 });
 //@description     Get Patient's History
