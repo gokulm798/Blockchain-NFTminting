@@ -4,6 +4,7 @@ const { nftRequest, licenseRequest } = require("../models/userRequest");
 const { User } = require("../models/user");
 const account = require("../models/account");
 const diagnosis = require("../models/diagnosis");
+const {dupdata} = require("../models/ipfs");
 
 //********************************************************************************************************************************************** */
 //********************************************************************************************************************************************** */
@@ -214,10 +215,18 @@ const userRequestLicense = asyncHandler(async (req, res) => {
   //console.log(userExists)
   const sender_name = researcherExists.name;
 
-  if (patientExists == null) {
+  if (researcherExists == null) {
     res.status(400);
-    throw new Error("Patient not found");
+    throw new Error("Researcher not found");
   }
+  const diseaseExists = await dupdata.findOne({ token_id:  token});
+  if (diseaseExists == null) {
+    res.status(400);
+    throw new Error("Token not found in feed ");
+  }
+
+  const diagnosis_disease=diseaseExists.diagnosis_disease
+
 
   const userReq = await licenseRequest.create({
     time,
@@ -228,6 +237,7 @@ const userRequestLicense = asyncHandler(async (req, res) => {
     researcher_address,
     sender_name,
     content,
+    diagnosis_disease,
   });
 
   if (userReq) {

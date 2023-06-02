@@ -37,7 +37,7 @@ const licenseRequestSchema = mongoose.Schema(
     isSenderRead:{type:"Boolean",default:false},
     sender_name:{type:"String",required:true},
     content:{ type: "String", required: true },
-
+    diagnosis_disease:{ type: "String", required: true },
    
   },
   { timestamps: true }
