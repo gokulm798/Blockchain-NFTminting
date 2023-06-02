@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FiCopy } from "react-icons/fi";
+import { toast } from "react-toastify";
 const AuthForm = ({ children, onSubmit }) => {
   return (
     <form className="py-7 px-6 " onSubmit={onSubmit}>
@@ -102,6 +103,7 @@ const Login = (props, { onSubmit }) => {
         // onSubmit({ email, password, confirmPassword });
       }
     } catch (error) {
+      toast.error(error.response.data.message);
       console.log(error);
     }
   };
@@ -236,6 +238,7 @@ const Signup = (props, { onSubmit }) => {
         }
       } catch (error) {
         console.log(error);
+        toast.error(error.message);
       }
     }
     setMatchPassword(true);

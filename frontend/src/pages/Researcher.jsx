@@ -237,13 +237,12 @@ const rejectReq = async (request) => {
         });
 
         if (response.ok) {
-          const data = await response.json();
-          console.log(data);
-          console.log(data.content);
-          setFileString(data.content);
+          const pdf = await response.blob();
+
+          setFileString(URL.createObjectURL(pdf));
         } else {
-          throw new Error("Request failed with status: " + response.status);
           setFileString("");
+          throw new Error("Request failed with status: " + response.status);
         }
       } catch (error) {
         console.log("Error: " + error.message);

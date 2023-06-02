@@ -224,7 +224,7 @@ const Patient = (props) => {
     if (Meta) {
       console.log(request._id);
       try {
-        await contract.accept();
+        // await contract.accept();
         // console.log(sm);
 
         const response = await fetch(
@@ -318,10 +318,8 @@ const Patient = (props) => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        console.log(data.content);
-        setFileString(data.content);
+        const pdf = await response.blob();
+        setFileString(URL.createObjectURL(pdf));
       } else {
         throw new Error("Request failed with status: " + response.status);
       }
@@ -389,7 +387,7 @@ const Patient = (props) => {
                 acptF={acceptLicReq}
                 rejtF={rejectLicReq}
                 RecordDetails={() => {}}
-                filter="license"
+                filter={showReq}
               />
             ) : (
               <RequestContainer
@@ -401,7 +399,7 @@ const Patient = (props) => {
                 acptF={acceptMintReq}
                 rejtF={rejectMintReq}
                 RecordDetails={() => {}}
-                filter="mint"
+                filter={showReq}
               />
             )}
           </>

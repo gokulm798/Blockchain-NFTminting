@@ -18,17 +18,23 @@ const RequestContainer = (props) => {
   const [ResMsg, setResMsg] = useState(false);
   let filteredRequests = requests;
   useEffect(() => {
+    console.log(filter);
     if (filter == "accepted") {
       filteredRequests = requests.filter((request) => request.isAccept);
+      console.log(filteredRequests);
       setAccepted(true);
-    } else if (filter == "license") {
+    } else if (filter == "License") {
       setLicMsg(true);
-    } else if (filter == "mint") {
+      setMintMsg(false);
+      console.log(LicMsg);
+    } else if (filter == "Mint") {
       setMintMsg(true);
+      setLicMsg(false);
+      console.log(MintMsg);
     } else {
       setResMsg(true);
     }
-  }, []);
+  }, [filter]);
 
   if (filteredRequests.length === 0) {
     return <div className="text-2xl text-red-700">No requests found</div>;
@@ -48,29 +54,28 @@ const RequestContainer = (props) => {
           {/* {request.Content} */}
           {Accepted && request.isAccept && (
             <span>
-              Thomas KK[PTHO6647
-              {/* {request.request_to} */}] has accepted the request for minting{" "}
-              {request.diagnosis_diesease} treatment records under{" "}
-              {request.doc_name} as Nfts.
-            </span>
-          )}
-          {MintMsg && (
-            <span className="ml-0">
-              Rajasri Hospital [{request.sender_username}] : Request to mint
-              your medical records for Fracture under Dr.
-              {/* {request.diagnosis_diesease} */}
+              {request.request_to} has accepted the request for minting{" "}
+              {request.diagnosis_disease} treatment records under{" "}
               {request.doc_name} as Nfts.
             </span>
           )}
           {LicMsg && (
-            <span className="ml-2">
-              {request.sender_username} has a request for license of
-              {request.diagnosis_diesease} records {request.doc_name}.
+            <span>
+              {request.sender_name} has a request to license your records of{" "}
+              {request.diagnosis_disease}
             </span>
           )}
+          {MintMsg && (
+            <span>
+              {request.sender_name} has requested to mint your medical records
+              for {request.diagnosis_disease} Dr.{request.doc_name} as Nfts.
+            </span>
+          )}
+
           {ResMsg && (
             <span>
-              Thomas KK [PTHO6647] has licensed you medical records on Fracture
+              {request.sender_username} has licensed you medical records on
+              Fracture
             </span>
           )}
           {aBtn && (

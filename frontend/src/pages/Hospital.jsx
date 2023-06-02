@@ -194,9 +194,10 @@ const Hospital = () => {
       const amt = ethers.utils.parseEther("0.01");
       try {
         await contract.mintNFT(tokenId, data.cid, { value: amt });
+        toast("\tNFT Minted");
         NftMinted();
       } catch (error) {
-        console.log(error);
+        toast.error(error);
       }
       // const r = contract.getReceivedValue();
       // console.log(r);
@@ -208,23 +209,28 @@ const Hospital = () => {
   };
 
   const NftMinted = async () => {
-    console.log(cid);
-    const response = await fetch("http://localhost:8000/api/nft/upload/mint", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${tk}`,
-      },
-      body: JSON.stringify({
-        mint: true,
-        cid,
-        reqId: RequestId,
-      }),
-    });
+    try {
+      console.log(cid);
+      const response = await fetch(
+        "http://localhost:8000/api/nft/upload/mint",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${tk}`,
+          },
+          body: JSON.stringify({
+            mint: true,
+            cid,
+            reqId: RequestId,
+          }),
+        }
+      );
 
-    if (response.ok) {
-      console.log("Success");
-    }
+      if (response.ok) {
+        toast.success(`${Pid} : Data Updated`);
+      }
+    } catch (error) {}
   };
   const handleUpload = async (request) => {
     console.log(request);
@@ -233,8 +239,10 @@ const Hospital = () => {
     setDoc(request.doc_name);
     // setCid(request.cid);
     // console.log(request.cid);
-    setPop(!pop);
     setRequestId(request._id);
+    if (Meta) {
+      setPop(!pop);
+    } else toast.info("Connect your wallet");
   };
 
   //   contract.createNFT(t, nm, desc, doc);
