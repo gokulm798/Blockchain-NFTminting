@@ -77,6 +77,7 @@ const upload = asyncHandler(async (req, res) => {
     res.status(201).json({
         upload:true,
         cid:cid,
+        id:nft._id,
       
     });
   } else {

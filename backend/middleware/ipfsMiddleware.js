@@ -1,13 +1,20 @@
 const {createIPFSNode,addFileToIPFS}= require("../config/ipfsConnect.js")
 const asyncHandler = require("express-async-handler");
+const {encrypt, decrypt} = require("../config/aes.js")
 
 
 const nftUpload = asyncHandler(async (req, res, next) => {
     try{
 
 
-    const node=await createIPFSNode();
-    const content=req.body.hash
+    const node= await createIPFSNode();
+    const text= req.body.hash
+    const secretKey= process.env.AES_SECRET
+
+
+    const content = await encrypt(text, secretKey);
+
+
     req.result=await addFileToIPFS(node,content);
 
 
@@ -42,8 +49,17 @@ const nftUpload = asyncHandler(async (req, res, next) => {
         
         
      }
-     req.result=result
-     console.log(result)
+     const encryptedText=result
+     const secretKey= process.env.AES_SECRET
+
+
+
+
+     const decryptedText = await decrypt(encryptedText,secretKey);
+     
+
+     req.result=decryptedText
+     console.log(decryptedText)
      
 
 
