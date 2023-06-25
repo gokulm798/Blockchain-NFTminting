@@ -1,0 +1,187 @@
+//SPDX-License-Identifier: Unlicensed
+pragma solidity ^0.8.9;
+
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+
+
+contract TwoOwnerNFT is ERC721 {
+    address public owner1;
+    address public owner2;
+    using Counters for Counters.Counter;
+    Counters.Counter private _tokenidCounter;
+    uint256 receivedValue;
+    uint256 public constant MAX_TOKENS=10000;
+    uint256 public price_mint= 1000000000000000 wei;
+    uint256 public price_license=2000000000000000 wei;
+    string public baseUri;
+    bool isAccepted;
+    uint256 expirationTime;
+    string public baseExtension=".json";
+
+    modifier onlyOwner{
+       require(msg.sender==owner2,"only owner initiate this");
+       _;
+    }
+
+    struct NFT {
+        string image;
+    }
+    
+    struct License {
+        uint256 tokenId;
+        address licensee;
+        uint256 expirationTime;
+    }
+
+    struct ApprovalRequest {
+        address requester;
+        uint256 tokenId;
+    }
+  
+    struct PatientData{
+        string bloodgroup;
+        uint256 age;
+        string gender;
+    }
+
+    struct LicenseRequest {
+    address requester;
+    uint256 tokenId;
+    uint256 duration;
+    uint256 price;
+    }
+
+    event TokenRequested(address indexed owner, uint token);
+    event LicenseRequested(address indexed requester, uint256 tokenId);
+
+    mapping(uint256 => NFT) private nfts;
+    mapping(uint256 => bool) private approvalStatus;
+    mapping(address => ApprovalRequest) private approvalRequests;
+    mapping (uint256 => mapping(address => License)) public licenses;
+    mapping(address => LicenseRequest) private licenseRequests;
+    mapping (uint256 => address[]) public licenseHolders;
+    mapping(string=>PatientData) private PatientFields;
+    mapping(address => uint256[]) public licensesByAddress;
+    mapping(uint256=>address) public Mintaddress;
+
+
+    constructor() ERC721("NFT Name","SYMBOL") {
+    }
+
+    function setOwnersAndRequestApproval(address _owner1, address _owner2) public {
+        require(_owner1 != address(0), "Invalid owner 1 address");
+        require(_owner2 != address(0), "Invalid owner 2 address");
+        require(msg.sender==_owner1,"Only owner can set owners");
+        owner1 = _owner1;
+        owner2 = _owner2;
+    }
+
+   function mintNFT(uint256 _tokenId, string memory _image) payable public {
+    require(!_exists(_tokenId), "Token ID exists");
+    require(msg.sender == owner1, "Only owner 1 can initiate NFT minting");
+    require(msg.value>=price_mint,"Not enough ether");
+
+    nfts[_tokenId] = NFT(_image);
+    _safeMint(owner2, _tokenId);
+    receivedValue = msg.value;
+    Mintaddress[_tokenId] = owner2; 
+    }
+    
+    function accept() public onlyOwner{
+     isAccepted=true;
+    }
+
+    function getReceivedValue() public view returns (uint256) {
+        return receivedValue;
+    }
+
+    function setPrice(uint256 _price) external onlyOwner{
+        price_mint=_price;
+    }
+    
+    function calculateLicensePrice(uint256 _duration) public pure returns (uint256) {
+    return _duration * 0.01 ether;
+    }
+
+    function getmintprice() public view returns(uint256){
+        return price_mint;
+    }
+
+    function requestApprovalForLicense(uint256 _tokenId, uint256 _duration) public payable {
+    require(msg.sender != owner1 && msg.sender != owner2, "Owner 1 or 2 cannot request approval for license");
+    require(_exists(_tokenId), "NFT does not exist");
+    require(licenseRequests[msg.sender].requester == address(0), "Another request is already pending");
+    uint256 price = calculateLicensePrice(_duration);
+   // require(msg.value == price, "Insufficient payment for license");
+    
+    LicenseRequest memory request = LicenseRequest(msg.sender, _tokenId, _duration, price);
+    licenseRequests[msg.sender] = request;
+    emit LicenseRequested(msg.sender, _tokenId);
+    }
+
+    
+    function getLicensesByAddress(address _address) public view returns (uint256[] memory) {
+    return licensesByAddress[_address];
+    }
+
+    function respondToLicenseRequest(address _licensee, bool _approve) public {
+    LicenseRequest memory request = licenseRequests[_licensee];
+    require(msg.sender >= owner2, "Only owner can accept license request");
+    require(request.requester != address(0), "No request pending");
+
+    if (!_approve) {
+        delete licenseRequests[_licensee];
+        //payable(request.requester).transfer(request.price);
+    } else {
+        uint256 currentTimestamp = block.timestamp;
+
+        if (licenses[request.tokenId][_licensee].expirationTime > currentTimestamp) {
+            uint256 remainingTime = licenses[request.tokenId][_licensee].expirationTime - block.timestamp;
+            expirationTime = block.timestamp + remainingTime;
+        } else {
+            expirationTime = currentTimestamp;
+        }
+
+        expirationTime += request.duration;
+
+        address currentLicensee = licenses[request.tokenId][_licensee].licensee;
+        if (currentLicensee != address(0) && licenses[request.tokenId][currentLicensee].expirationTime <= currentTimestamp) {
+            delete licenses[request.tokenId][currentLicensee];
+        }
+
+        approve(_licensee, request.tokenId);
+        licenses[request.tokenId][_licensee] = License(request.tokenId, _licensee, expirationTime);
+        licenseHolders[request.tokenId].push(_licensee);
+        licensesByAddress[_licensee].push(request.tokenId);
+        //address mintedAddress = Mintaddress[request.tokenId];
+        //payable(mintedAddress).transfer(request.price);
+    }
+    delete licenseRequests[_licensee];
+}
+
+function _checkLicense(uint256 _tokenId) public returns(bool) {
+    require(_exists(_tokenId), "NFT does not exist.");
+    License storage license = licenses[_tokenId][msg.sender];
+
+    require(license.licensee == msg.sender, "Access denied. You are not an approved licensee.");
+    require(license.expirationTime > block.timestamp, "Access denied. License has expired.");
+
+    if (license.expirationTime <= block.timestamp) {
+        delete licenses[_tokenId][msg.sender];
+        return false;
+    }
+  return true;
+}
+
+function getNFT(uint256 _tokenId) public view returns (string memory) {
+    require(_exists(_tokenId), "NFT does not exist.");
+
+    NFT memory nft = nfts[_tokenId];
+    License storage license = licenses[_tokenId][msg.sender];
+    if (license.licensee == msg.sender && license.expirationTime > block.timestamp) {
+        return nft.image;
+    }
+    revert("Access denied. License has expired or you are not an approved licensee.");
+    }
+}
